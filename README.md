@@ -7,6 +7,25 @@ Page répertoriant de manière claire et précis mes projets.
 
 Ce projet a été généré en utilisant [Angular CLI](https://github.com/angular/angular-cli) version 21.0.3.
 
+## Fonctionnalités
+
+- Regroupement de tous mes projets.
+- Présentation de mes projets.
+- Lien vers les projets en ligne.
+- Lien vers les dépôts git.
+- Affichage des états courants des projets.
+
+## Technologies
+
+- Angular 21.0.3
+- TypeScript
+- Node.js / npm
+
+## Roadmap
+
+- [ ] Affichage automatique des README des projets git
+- [ ] Affichage des états courants des projets (`En développement`,`Non publié`,`En ligne (V.XX.X)`,...)
+
 ## Déploiement
 
 Un système d'intégration continue (CI) et de déploiement continu (CD) sont intégrés au serveur de production. Ces systèmes vérifies le code et build le projet.
