@@ -1,12 +1,16 @@
 <div class="content">
-  <div class="proj-list">
-    <div class="proj">
-      <img>
-      <div class="proj-info">
-
-      </div>
-      <div class="proj-badge">
-        
+  <h1>Mes projets</h1>
+  <div class="content">
+    <h1>Mes projets</h1>
+    <a href="https://kylianjulia.fr/">Mon site kylianjulia.fr -></a>
+    <div class="proj-list">
+      <div class="prog" *ngFor="let p of projets">
+        <img src="" alt="">
+        <div class="proj-info">
+          <h2>{{ p.titre }}</h2>
+        </div>
+        <div class="proj-badge">
+        </div>
       </div>
     </div>
   </div>
