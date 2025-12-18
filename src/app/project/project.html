@@ -1,1 +1,9 @@
-<p>project works!</p>
+<div class="modal-overlay" (click)="closeModal()">
+    <div class="modal-content" (click)="$event.stopPropagation()">
+        <button class="close-btn" (click)="closeModal()"><span>&times;</span></button>
+        <div class="project-detail" *ngIf="projet">
+            <h2>{{ projet.titre }}</h2>
+            <p class="description">{{ projet.description }}</p>
+        </div>
+    </div>
+</div>
