@@ -7,23 +7,85 @@ import { Projet, Etat } from '../models/projet.model';
 export class ProjetService {
     private projetsSignal = signal<Projet[]>([
         {
-        id: 1,
-        logo: "image",
-        titre: "KlientHTTP",
-        description: "projet qui sert à quelque chose",
-        etat: Etat.EN_LIGNE,
-        dateCreation: new Date('2025-12-11'),
-        dateMAJ: new Date('2025-12-11'),
-        gitUrl: 'https://github.com/kylianjoff/KlientHTTP'
+            id: 1,
+            logo: "image",
+            titre: "KlientHTTP",
+            description: "Un client HTTP moderne en C avec interface console intéractive et support complet de toutes les méthodes HTTP.",
+            etat: Etat.EN_DEV,
+            dateCreation: new Date('2025-12-07'),
+            dateMAJ: new Date('2025-12-21'),
+            gitUrl: 'https://github.com/kylianjoff/KlientHTTP'
         },
         {
-        id: 2,
-        logo: "image",
-        titre: "projet2",
-        description: "lui il sert à ça",
-        etat: Etat.EN_DEV,
-        dateCreation: new Date('2025-11-28'),
-        dateMAJ: new Date('2025-12-10')
+            id: 2,
+            logo: "image",
+            titre: "kylianjulia.fr",
+            description: "Site personnel de Kylian JULIA.",
+            etat: Etat.EN_LIGNE,
+            dateCreation: new Date('2025-11-28'),
+            dateMAJ: new Date('2025-12-10'),
+            gitUrl: 'https://github.com/kylianjoff/kylianjulia',
+            liveUrl: 'https://kylianjulia.fr/'
+        },
+        {
+            id: 3,
+            logo: "image",
+            titre: "projets.kylianjulia.fr",
+            description: "Regroupement de tous les projets de Kylian JULIA.",
+            etat: Etat.EN_DEV,
+            dateCreation: new Date('2025-12-11'),
+            dateMAJ: new Date('2025-12-21'),
+            gitUrl: 'https://github.com/kylianjoff/projets-kylianjulia',
+        },
+        {
+            id: 4,
+            logo: "image",
+            titre: "Template mail IsiMalt",
+            description: "Template HTML pour les mails du club de bière IsiMalt de l'ISIMA.",
+            etat: Etat.EN_LIGNE,
+            dateCreation: new Date(''),
+            dateMAJ: new Date(''),
+            gitUrl: 'https://github.com/kylianjoff/template_mail_isimalt',
+            liveUrl: 'https://kylianjoff.github.io/template_mail_isimalt/Template_mail_Isimalt.html'
+        },
+        {
+            id: 5,
+            logo: "image",
+            titre: "Template mail Shared",
+            description: "Template HTML pour les mails du club caritatif Shared de l'ISIMA.",
+            etat: Etat.EN_LIGNE,
+            dateCreation: new Date(''),
+            dateMAJ: new Date(''),
+            gitUrl: 'https://github.com/kylianjoff/template_mail_shared',
+            liveUrl: 'https://kylianjoff.github.io/template_mail_shared/Template_mail_Shared.html'
+        },
+        {
+            id: 6,
+            logo: "image",
+            titre: "Coockie ClickerZZ",
+            description: "Implementation des routes pour un backend d'un jeu de coockie clicker. Les retours sont conditionnés par un front",
+            etat: Etat.EN_DEV,
+            dateCreation: new Date('2025-11-14'),
+            dateMAJ: new Date('2025-12-20'),
+            gitUrl: 'https://gitlab.isima.fr/emdufrenne/projet_clicker_cs'  
+        },
+        {
+            id: 7,
+            logo: "",
+            titre: "",
+            description: "",
+            etat: Etat.EN_LIGNE,
+            dateCreation: new Date(''),
+            dateMAJ: new Date('2025-12-01')
+        },
+        {
+            id: 8,
+            logo: "",
+            titre: "",
+            description: "",
+            etat: Etat.EN_LIGNE,
+            dateCreation: new Date(''),
+            dateMAJ: new Date('2025-11-30')
         }
     ]);
 
