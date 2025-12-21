@@ -11,4 +11,17 @@
 }
 
 .modal-content {
+    background: #fff;
+    padding: 20px;
+    border-radius: 15px;
+    min-height: 10vh;
+    margin: 10px 0;
+    width: 50vw;
+}
+
+.project-detail {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
 }

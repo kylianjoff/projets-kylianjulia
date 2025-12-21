@@ -4,6 +4,14 @@
         <div class="project-detail" *ngIf="projet">
             <h2>{{ projet.titre }}</h2>
             <p class="description">{{ projet.description }}</p>
+            <div class="urls">
+                <a href="{{ projet.gitUrl }}" *ngIf="projet.gitUrl">Dépôt GIT</a>
+                <a href="{{ projet.liveUrl }}" *ngIf="projet.liveUrl">Résultat</a>
+            </div>
+            <div class="readme-license">
+                <button>Readme</button>
+                <button>License</button>
+            </div>
         </div>
     </div>
 </div>
