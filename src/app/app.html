@@ -3,8 +3,11 @@
   <a href="https://kylianjulia.fr/" class="site-perso">Mon site kylianjulia.fr →</a>
   <div class="proj-list">
     <div class="proj" *ngFor="let p of projetService.projets()" (click)="openProjet(p.id)">
-      <h3>{{ p.titre }}</h3>
-      <p>{{ p.description }}</p>
+      <img src="{{ p.logo }}" alt="logo du projet + {{ p.titre }}">
+      <div class="titre-desc">
+        <h3>{{ p.titre }}</h3>
+        <p>{{ p.description }}</p>
+      </div>
       <span class="badge" [attr.data-etat]="p.etat">
         {{ getEtatLabel(p.etat) }}
       </span>
