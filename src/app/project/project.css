@@ -15,8 +15,33 @@
     padding: 20px;
     border-radius: 15px;
     min-height: 10vh;
+    max-height: 85vh;
     margin: 10px 0;
     width: 50vw;
+    position: relative;
+    overflow-y: auto;
+}
+
+.close-btn {
+    position: absolute;
+    top: 15px;
+    right: 15px;
+    background: transparent;
+    border: none;
+    font-size: 28px;
+    cursor: pointer;
+    color: #666;
+    line-height: 1;
+    padding: 0;
+    width: 30px;
+    height: 30px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.close-btn:hover {
+    color: #000;
 }
 
 .project-detail {
@@ -24,4 +49,308 @@
     flex-direction: column;
     justify-content: center;
     align-items: center;
+}
+
+.project-detail h2 {
+    margin: 0 0 15px 0;
+    text-align: center;
+}
+
+.project-detail .description {
+    text-align: center;
+    color: #666;
+    margin-bottom: 20px;
+}
+
+.urls {
+    display: flex;
+    gap: 15px;
+    margin-bottom: 20px;
+}
+
+.urls a {
+    padding: 10px 20px;
+    background: #007bff;
+    color: white;
+    text-decoration: none;
+    border-radius: 8px;
+    transition: background 0.3s;
+}
+
+.urls a:hover {
+    background: #0056b3;
+}
+
+.readme-license {
+    display: flex;
+    gap: 10px;
+    margin: 20px 0;
+}
+
+.readme-license button {
+    padding: 10px 20px;
+    border: 2px solid #ddd;
+    background: white;
+    cursor: pointer;
+    border-radius: 8px;
+    font-size: 14px;
+    transition: all 0.3s;
+}
+
+.readme-license button:hover {
+    border-color: #007bff;
+}
+
+.readme-license button.active {
+    background: #007bff;
+    color: white;
+    border-color: #007bff;
+}
+
+.content-display {
+    width: 100%;
+    max-height: 400px;
+    overflow-y: auto;
+    border: 1px solid #ddd;
+    padding: 15px;
+    border-radius: 10px;
+    background: #f8f9fa;
+}
+
+.content-display pre {
+    white-space: pre-wrap;
+    word-wrap: break-word;
+    margin: 0;
+    font-family: 'Courier New', monospace;
+    font-size: 13px;
+    line-height: 1.5;
+}
+
+.loading {
+    text-align: center;
+    padding: 40px;
+    color: #666;
+    font-style: italic;
+}
+
+.no-content {
+    text-align: center;
+    padding: 40px;
+    color: #999;
+    font-style: italic;
+}
+
+/* Style pour le contenu markdown */
+.markdown-content {
+    text-align: left;
+    color: #24292f;
+}
+
+.markdown-content h1,
+.markdown-content h2,
+.markdown-content h3,
+.markdown-content h4,
+.markdown-content h5,
+.markdown-content h6 {
+    margin-top: 24px;
+    margin-bottom: 16px;
+    font-weight: 600;
+    line-height: 1.25;
+    color: #24292f;
+}
+
+.markdown-content h1 {
+    font-size: 2em;
+    border-bottom: 1px solid #d0d7de;
+    padding-bottom: 0.3em;
+}
+
+.markdown-content h2 {
+    font-size: 1.5em;
+    border-bottom: 1px solid #d0d7de;
+    padding-bottom: 0.3em;
+}
+
+.markdown-content h3 {
+    font-size: 1.25em;
+}
+
+.markdown-content p {
+    margin-bottom: 16px;
+    line-height: 1.6;
+}
+
+/* Inline code */
+.markdown-content code {
+    background-color: rgba(175, 184, 193, 0.2);
+    border-radius: 6px;
+    font-size: 85%;
+    margin: 0;
+    padding: 0.2em 0.4em;
+    font-family: ui-monospace, SFMono-Regular, 'SF Mono', Menlo, Consolas, 'Liberation Mono', monospace;
+}
+
+/* Code blocks */
+.markdown-content pre {
+    background-color: #f6f8fa;
+    border-radius: 6px;
+    padding: 16px;
+    overflow: auto;
+    line-height: 1.45;
+    margin-bottom: 16px;
+    border: 1px solid #d0d7de;
+}
+
+.markdown-content pre code {
+    background-color: transparent;
+    padding: 0;
+    margin: 0;
+    display: block;
+    font-size: 100%;
+    border-radius: 0;
+}
+
+.markdown-content a {
+    color: #0969da;
+    text-decoration: none;
+}
+
+.markdown-content a:hover {
+    text-decoration: underline;
+}
+
+.markdown-content ul,
+.markdown-content ol {
+    padding-left: 2em;
+    margin-bottom: 16px;
+}
+
+.markdown-content li {
+    margin-bottom: 0.25em;
+}
+
+/* Task list items (checkboxes) */
+.markdown-content .task-list-item {
+    list-style-type: none;
+    margin-left: -1.5em;
+}
+
+.markdown-content .task-list-item input[type="checkbox"] {
+    margin-right: 0.5em;
+    vertical-align: middle;
+    cursor: default;
+}
+
+.markdown-content blockquote {
+    padding: 0 1em;
+    color: #57606a;
+    border-left: 0.25em solid #d0d7de;
+    margin: 0 0 16px 0;
+}
+
+.markdown-content table {
+    border-spacing: 0;
+    border-collapse: collapse;
+    margin-bottom: 16px;
+    width: 100%;
+    overflow: auto;
+    display: block;
+}
+
+.markdown-content table th,
+.markdown-content table td {
+    padding: 6px 13px;
+    border: 1px solid #d0d7de;
+}
+
+.markdown-content table th {
+    font-weight: 600;
+    background-color: #f6f8fa;
+}
+
+.markdown-content table tr {
+    background-color: #ffffff;
+    border-top: 1px solid #d0d7de;
+}
+
+.markdown-content table tr:nth-child(2n) {
+    background-color: #f6f8fa;
+}
+
+.markdown-content img {
+    max-width: 100%;
+    height: auto;
+    border-radius: 6px;
+    margin: 16px 0;
+}
+
+.markdown-content hr {
+    height: 0.25em;
+    padding: 0;
+    margin: 24px 0;
+    background-color: #d0d7de;
+    border: 0;
+}
+
+/* Strong and emphasis */
+.markdown-content strong {
+    font-weight: 600;
+}
+
+.markdown-content em {
+    font-style: italic;
+}
+
+/* Syntax highlighting pour les langages (basique) */
+.markdown-content pre code.language-javascript,
+.markdown-content pre code.language-js {
+    color: #24292f;
+}
+
+.markdown-content pre code.language-typescript,
+.markdown-content pre code.language-ts {
+    color: #24292f;
+}
+
+.markdown-content pre code.language-python {
+    color: #24292f;
+}
+
+.markdown-content pre code.language-bash,
+.markdown-content pre code.language-shell {
+    color: #24292f;
+}
+
+/* Code blocks avec highlight.js */
+.markdown-content pre {
+    background-color: #f6f8fa;
+    border-radius: 6px;
+    padding: 16px;
+    overflow: auto;
+    line-height: 1.45;
+    margin-bottom: 16px;
+    border: 1px solid #d0d7de;
+}
+
+.markdown-content pre code.hljs {
+    background-color: transparent;
+    padding: 0;
+    margin: 0;
+    display: block;
+    font-size: 14px;
+    border-radius: 0;
+}
+
+/* Inline code */
+.markdown-content code {
+    background-color: rgba(175, 184, 193, 0.2);
+    border-radius: 6px;
+    font-size: 85%;
+    margin: 0;
+    padding: 0.2em 0.4em;
+    font-family: ui-monospace, SFMono-Regular, 'SF Mono', Menlo, Consolas, 'Liberation Mono', monospace;
+}
+
+.markdown-content code:not(.hljs) {
+    color: #24292f;
 }

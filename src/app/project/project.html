@@ -5,12 +5,34 @@
             <h2>{{ projet.titre }}</h2>
             <p class="description">{{ projet.description }}</p>
             <div class="urls">
-                <a href="{{ projet.gitUrl }}" *ngIf="projet.gitUrl">Dépôt GIT</a>
-                <a href="{{ projet.liveUrl }}" *ngIf="projet.liveUrl">Résultat</a>
+                <a [href]="projet.gitUrl" target="_blank" *ngIf="projet.gitUrl">Dépôt GIT</a>
+                <a [href]="projet.liveUrl" target="_blank" *ngIf="projet.liveUrl">Résultat</a>
             </div>
             <div class="readme-license">
-                <button>Readme</button>
-                <button>License</button>
+                <button 
+                    [class.active]="activeTab() === 'readme'" 
+                    (click)="setActiveTab('readme')">
+                    README
+                </button>
+                <button 
+                    [class.active]="activeTab() === 'license'" 
+                    (click)="setActiveTab('license')">
+                    LICENSE
+                </button>
+            </div>
+            
+            <div class="content-display">
+                <div *ngIf="activeTab() === 'readme'">
+                    <div *ngIf="projet.readmeLoading" class="loading">Chargement du README...</div>
+                    <div *ngIf="!projet.readmeLoading && readmeHtml" class="markdown-content" [innerHTML]="readmeHtml"></div>
+                    <p *ngIf="!projet.readmeLoading && !projet.readme" class="no-content">Pas de README disponible</p>
+                </div>
+                
+                <div *ngIf="activeTab() === 'license'">
+                    <div *ngIf="projet.licenseLoading" class="loading">Chargement de la LICENSE...</div>
+                    <div *ngIf="!projet.licenseLoading && licenseHtml" class="markdown-content" [innerHTML]="licenseHtml"></div>
+                    <p *ngIf="!projet.licenseLoading && !projet.license" class="no-content">Pas de LICENSE disponible</p>
+                </div>
             </div>
         </div>
     </div>
