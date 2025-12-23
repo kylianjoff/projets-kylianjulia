@@ -3,6 +3,14 @@
     display: flex;
     flex-direction: column;
     align-items: center;
+    padding-bottom: 40px;
+}
+
+.content h1 {
+    font-size: 3em;
+    margin: 40px 0 20px 0;
+    color: #272727;
+    text-align: center;
 }
 
 .site-perso {
@@ -13,6 +21,7 @@
     text-decoration: none;
     border-radius: 5px;
     transition: ease-in-out 0.3s;
+    margin-bottom: 30px;
 }
 
 .site-perso:hover {
@@ -37,22 +46,21 @@
     border-radius: 10px;
     transition: ease-in-out 0.3s;
     text-decoration: none;
+    display: flex;
     align-items: center;
+    justify-content: center;
     padding: 10px;
 }
 
 .gitUrls a img {
-    position: relative;
-    top: 0;
-    left: 0;
     height: 40px;
     width: 40px;
-    border: solid 1px #fff;
+    object-fit: contain;
 }
 
 .gitUrls a:hover {
     transform: scale(1.1);
-    box-shadow: 0 0 10px #272727;
+    box-shadow: 0 0 10px #9f00b1;
 }
 
 .proj-list {
@@ -60,37 +68,126 @@
     flex-wrap: wrap;
     gap: 20px;
     margin: 20px;
+    justify-content: center;
+    width: 90%;
 }
 
 .proj {
     transition: ease-in-out 0.3s;
-    margin: 20px;
-    padding: 10px;
+    padding: 20px;
     display: flex;
     flex-direction: row;
     justify-content: space-between;
     align-items: center;
     width: 40vw;
-    height: 80px;
-    overflow: hidden;
+    min-height: 100px;
+    background: #ffffff;
+    border: 2px solid #e0e0e0;
     border-radius: 15px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
 }
 
 .proj:hover {
     cursor: pointer;
-    transform: scale(1.01);
-    box-shadow: 0 0 5px #272727;
+    transform: scale(1.02);
+    box-shadow: 0 4px 15px rgba(159, 0, 177, 0.3);
+    border-color: #9f00b1;
 }
 
 .proj img {
-    width: 40px;
-    height: 40px;
+    width: 50px;
+    height: 50px;
     border-radius: 50%;
+    object-fit: contain;
+    background: #f5f5f5;
+    padding: 5px;
 }
 
 .titre-desc {
+    flex: 1;
     display: flex;
     flex-direction: column;
-    justify-content: left;
-    align-items: top;
+    justify-content: center;
+    align-items: flex-start;
+    margin: 0 20px;
+}
+
+.titre-desc h3 {
+    margin: 0 0 8px 0;
+    font-size: 1.3em;
+    color: #272727;
+}
+
+.titre-desc p {
+    margin: 0;
+    font-size: 0.95em;
+    color: #666;
+    line-height: 1.4;
+}
+
+.badge {
+    padding: 8px 16px;
+    border-radius: 20px;
+    font-size: 0.85em;
+    font-weight: 600;
+    white-space: nowrap;
+}
+
+.badge[data-etat="0"] {
+    background: #fff3cd;
+    color: #856404;
+}
+
+.badge[data-etat="1"] {
+    background: #d4edda;
+    color: #155724;
+}
+
+.badge[data-etat="2"] {
+    background: #f8d7da;
+    color: #721c24;
+}
+
+.badge[data-etat="3"] {
+    background: #d1ecf1;
+    color: #0c5460;
+}
+
+.badge[data-etat="4"] {
+    background: #e2e3e5;
+    color: #383d41;
+}
+
+/* Responsive */
+@media (max-width: 1200px) {
+    .proj {
+        width: 80vw;
+    }
+}
+
+@media (max-width: 768px) {
+    .proj {
+        width: 90vw;
+        flex-direction: column;
+        text-align: center;
+    }
+
+    .titre-desc {
+        align-items: center;
+        margin: 15px 0;
+    }
+
+    .gitUrls {
+        gap: 20px;
+    }
+
+    .gitUrls a {
+        width: 60px;
+        height: 60px;
+    }
+
+    .gitUrls a img {
+        height: 30px;
+        width: 30px;
+    }
 }

@@ -1,25 +1,43 @@
+@import 'highlight.js/styles/github.css';
+
 .modal-overlay {
     display: flex;
     justify-content: center;
     align-items: center;
-    position: absolute;
+    position: fixed;
     top: 0;
     left: 0;
     width: 100vw;
     height: 100vh;
-    background: #00000014;
+    background: rgba(0, 0, 0, 0.4);
+    backdrop-filter: blur(3px);
+    z-index: 1000;
 }
 
 .modal-content {
     background: #fff;
-    padding: 20px;
+    padding: 30px;
     border-radius: 15px;
     min-height: 10vh;
     max-height: 85vh;
-    margin: 10px 0;
-    width: 50vw;
+    margin: 10px;
+    width: 60vw;
+    max-width: 1000px;
     position: relative;
     overflow-y: auto;
+    box-shadow: 0 10px 40px rgba(159, 0, 177, 0.3);
+    animation: slideIn 0.3s ease-out;
+}
+
+@keyframes slideIn {
+    from {
+        opacity: 0;
+        transform: translateY(-20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
 }
 
 .close-btn {
@@ -28,20 +46,24 @@
     right: 15px;
     background: transparent;
     border: none;
-    font-size: 28px;
+    font-size: 32px;
     cursor: pointer;
     color: #666;
     line-height: 1;
     padding: 0;
-    width: 30px;
-    height: 30px;
+    width: 35px;
+    height: 35px;
     display: flex;
     align-items: center;
     justify-content: center;
+    transition: all 0.3s;
+    border-radius: 50%;
 }
 
 .close-btn:hover {
-    color: #000;
+    color: #9f00b1;
+    background: rgba(159, 0, 177, 0.1);
+    transform: rotate(90deg);
 }
 
 .project-detail {
@@ -54,90 +76,112 @@
 .project-detail h2 {
     margin: 0 0 15px 0;
     text-align: center;
+    color: #272727;
+    font-size: 2em;
 }
 
 .project-detail .description {
     text-align: center;
     color: #666;
-    margin-bottom: 20px;
+    margin-bottom: 25px;
+    font-size: 1.1em;
+    line-height: 1.5;
 }
 
 .urls {
     display: flex;
     gap: 15px;
-    margin-bottom: 20px;
+    margin-bottom: 25px;
+    flex-wrap: wrap;
 }
 
 .urls a {
-    padding: 10px 20px;
-    background: #007bff;
+    padding: 12px 24px;
+    background: #9f00b1;
     color: white;
     text-decoration: none;
     border-radius: 8px;
-    transition: background 0.3s;
+    transition: all 0.3s;
+    font-weight: 500;
 }
 
 .urls a:hover {
-    background: #0056b3;
+    background: #7d008d;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(159, 0, 177, 0.4);
 }
 
 .readme-license {
     display: flex;
     gap: 10px;
-    margin: 20px 0;
+    margin: 25px 0;
 }
 
 .readme-license button {
-    padding: 10px 20px;
+    padding: 12px 24px;
     border: 2px solid #ddd;
     background: white;
     cursor: pointer;
     border-radius: 8px;
-    font-size: 14px;
+    font-size: 15px;
+    font-weight: 500;
     transition: all 0.3s;
+    color: #666;
 }
 
 .readme-license button:hover {
-    border-color: #007bff;
+    border-color: #9f00b1;
+    color: #9f00b1;
 }
 
 .readme-license button.active {
-    background: #007bff;
+    background: #9f00b1;
     color: white;
-    border-color: #007bff;
+    border-color: #9f00b1;
 }
 
 .content-display {
     width: 100%;
-    max-height: 400px;
+    max-height: 500px;
     overflow-y: auto;
-    border: 1px solid #ddd;
-    padding: 15px;
+    border: 1px solid #e0e0e0;
+    padding: 20px;
     border-radius: 10px;
     background: #f8f9fa;
 }
 
-.content-display pre {
-    white-space: pre-wrap;
-    word-wrap: break-word;
-    margin: 0;
-    font-family: 'Courier New', monospace;
-    font-size: 13px;
-    line-height: 1.5;
+.content-display::-webkit-scrollbar {
+    width: 8px;
+}
+
+.content-display::-webkit-scrollbar-track {
+    background: #f1f1f1;
+    border-radius: 10px;
+}
+
+.content-display::-webkit-scrollbar-thumb {
+    background: #9f00b1;
+    border-radius: 10px;
+}
+
+.content-display::-webkit-scrollbar-thumb:hover {
+    background: #7d008d;
 }
 
 .loading {
     text-align: center;
-    padding: 40px;
+    padding: 60px;
     color: #666;
     font-style: italic;
+    font-size: 16px;
 }
 
 .no-content {
     text-align: center;
-    padding: 40px;
+    padding: 60px;
     color: #999;
     font-style: italic;
+    font-size: 16px;
 }
 
 /* Style pour le contenu markdown */
@@ -156,18 +200,18 @@
     margin-bottom: 16px;
     font-weight: 600;
     line-height: 1.25;
-    color: #24292f;
+    color: #9f00b1;
 }
 
 .markdown-content h1 {
     font-size: 2em;
-    border-bottom: 1px solid #d0d7de;
+    border-bottom: 2px solid #9f00b1;
     padding-bottom: 0.3em;
 }
 
 .markdown-content h2 {
     font-size: 1.5em;
-    border-bottom: 1px solid #d0d7de;
+    border-bottom: 1px solid rgba(159, 0, 177, 0.3);
     padding-bottom: 0.3em;
 }
 
@@ -182,12 +226,13 @@
 
 /* Inline code */
 .markdown-content code {
-    background-color: rgba(175, 184, 193, 0.2);
+    background-color: rgba(159, 0, 177, 0.1);
     border-radius: 6px;
     font-size: 85%;
     margin: 0;
     padding: 0.2em 0.4em;
     font-family: ui-monospace, SFMono-Regular, 'SF Mono', Menlo, Consolas, 'Liberation Mono', monospace;
+    color: #9f00b1;
 }
 
 /* Code blocks */
@@ -201,18 +246,20 @@
     border: 1px solid #d0d7de;
 }
 
-.markdown-content pre code {
+.markdown-content pre code.hljs {
     background-color: transparent;
     padding: 0;
     margin: 0;
     display: block;
-    font-size: 100%;
+    font-size: 14px;
     border-radius: 0;
+    color: #24292f;
 }
 
 .markdown-content a {
-    color: #0969da;
+    color: #9f00b1;
     text-decoration: none;
+    font-weight: 500;
 }
 
 .markdown-content a:hover {
@@ -239,13 +286,15 @@
     margin-right: 0.5em;
     vertical-align: middle;
     cursor: default;
+    accent-color: #9f00b1;
 }
 
 .markdown-content blockquote {
     padding: 0 1em;
     color: #57606a;
-    border-left: 0.25em solid #d0d7de;
+    border-left: 0.25em solid #9f00b1;
     margin: 0 0 16px 0;
+    background: rgba(159, 0, 177, 0.05);
 }
 
 .markdown-content table {
@@ -265,7 +314,8 @@
 
 .markdown-content table th {
     font-weight: 600;
-    background-color: #f6f8fa;
+    background-color: rgba(159, 0, 177, 0.1);
+    color: #9f00b1;
 }
 
 .markdown-content table tr {
@@ -288,69 +338,43 @@
     height: 0.25em;
     padding: 0;
     margin: 24px 0;
-    background-color: #d0d7de;
+    background-color: rgba(159, 0, 177, 0.2);
     border: 0;
 }
 
 /* Strong and emphasis */
 .markdown-content strong {
     font-weight: 600;
+    color: #9f00b1;
 }
 
 .markdown-content em {
     font-style: italic;
 }
 
-/* Syntax highlighting pour les langages (basique) */
-.markdown-content pre code.language-javascript,
-.markdown-content pre code.language-js {
-    color: #24292f;
-}
+/* Responsive */
+@media (max-width: 768px) {
+    .modal-content {
+        width: 95vw;
+        padding: 20px;
+        max-height: 90vh;
+    }
 
-.markdown-content pre code.language-typescript,
-.markdown-content pre code.language-ts {
-    color: #24292f;
-}
+    .urls {
+        flex-direction: column;
+        width: 100%;
+    }
 
-.markdown-content pre code.language-python {
-    color: #24292f;
-}
+    .urls a {
+        width: 100%;
+        text-align: center;
+    }
 
-.markdown-content pre code.language-bash,
-.markdown-content pre code.language-shell {
-    color: #24292f;
-}
+    .readme-license {
+        width: 100%;
+    }
 
-/* Code blocks avec highlight.js */
-.markdown-content pre {
-    background-color: #f6f8fa;
-    border-radius: 6px;
-    padding: 16px;
-    overflow: auto;
-    line-height: 1.45;
-    margin-bottom: 16px;
-    border: 1px solid #d0d7de;
-}
-
-.markdown-content pre code.hljs {
-    background-color: transparent;
-    padding: 0;
-    margin: 0;
-    display: block;
-    font-size: 14px;
-    border-radius: 0;
-}
-
-/* Inline code */
-.markdown-content code {
-    background-color: rgba(175, 184, 193, 0.2);
-    border-radius: 6px;
-    font-size: 85%;
-    margin: 0;
-    padding: 0.2em 0.4em;
-    font-family: ui-monospace, SFMono-Regular, 'SF Mono', Menlo, Consolas, 'Liberation Mono', monospace;
-}
-
-.markdown-content code:not(.hljs) {
-    color: #24292f;
+    .readme-license button {
+        flex: 1;
+    }
 }
