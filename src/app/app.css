@@ -21,6 +21,40 @@
     box-shadow: 0 0 10px #9f00b1;
 }
 
+.gitUrls {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+    padding: 20px;
+    gap: 40px;
+}
+
+.gitUrls a {
+    background: #272727;
+    width: 80px;
+    height: 80px;
+    border-radius: 10px;
+    transition: ease-in-out 0.3s;
+    text-decoration: none;
+    align-items: center;
+    padding: 10px;
+}
+
+.gitUrls a img {
+    position: relative;
+    top: 0;
+    left: 0;
+    height: 40px;
+    width: 40px;
+    border: solid 1px #fff;
+}
+
+.gitUrls a:hover {
+    transform: scale(1.1);
+    box-shadow: 0 0 10px #272727;
+}
+
 .proj-list {
     display: flex;
     flex-wrap: wrap;
