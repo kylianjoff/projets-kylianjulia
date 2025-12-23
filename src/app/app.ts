@@ -2,10 +2,11 @@ import { Component, signal, OnInit } from '@angular/core';
 import { RouterOutlet, Router } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { ProjetService } from './services/projects.service';
+import { ContributionChart } from './contribution-chart/contribution-chart';
 
 @Component({
   selector: 'app-root',
-  imports: [RouterOutlet, CommonModule],
+  imports: [RouterOutlet, CommonModule, ContributionChart],
   templateUrl: './app.html',
   styleUrls: ['./app.css']
 })

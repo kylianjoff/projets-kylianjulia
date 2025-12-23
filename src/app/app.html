@@ -6,6 +6,9 @@
     <a href="https://gitlab.isima.fr/kyjulia"><img src="logos/gitlabisima.png" alt="Logo de gitlab.isima.fr"></a>
   </div>
   <a href="https://kylianjulia.fr/" class="site-perso">Mon site kylianjulia.fr →</a>
+
+  <app-contribution-chart></app-contribution-chart>
+
   <div class="proj-list">
     <div class="proj" *ngFor="let p of projetService.projets()" (click)="openProjet(p.id)">
       <img src="{{ p.logo }}" alt="logo du projet + {{ p.titre }}">
