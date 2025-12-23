@@ -2,15 +2,15 @@ export const environment = {
     production: false,
     github: {
         username: "kylianjoff",
-        token: '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'
+        token: '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'
     },
     gitlab: {
         username: "kylianju382",
-        token: 'glpat-z3G3lN3IFlAECZa1IZUdVG86MQp1OmkzZnZjCw.01.121jwy0r7'
+        token: 'glpat-nBW5hm_Qmfu45C_pHn5dGW86MQp1OmkzZnZjCw.01.1217iv9pu'
     },
     gitlabIsima: {
         baseUrl: "https://gitlab.iisima.fr",
         username: "kyjulia",
-        token: 'glpat-kYUYOWMOJ0SOe2ksbxlx7m86MQp1OjF1aQk.01.0z1omcp0u'
+        token: 'glpat-eswGW3gCNxD0aBU1qig4zG86MQp1OjF1aQk.01.0z16vlvm3'
     }
 }
