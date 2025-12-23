@@ -23,10 +23,12 @@ Ce projet a été généré en utilisant [Angular CLI](https://github.com/angula
 
 ## TODO
 
-- [ ] Affichage automatique des README des projets git
-- [ ] Affichage automatique des fichiers LICENSE des projets git
+- [X] Affichage automatique des README des projets git
+- [X] Affichage automatique des fichiers LICENSE des projets git
 - [ ] Affichage automatique des logos des projets git
-- [ ] Affichage des états courants des projets (`En développement`,`Non publié`,`En ligne (V.XX.X)`,...)
+- [X] Affichage des états courants des projets (`En développement`,`Non publié`,`En ligne (V.XX.X)`,...)
+- [ ] Affichage d'un tableau des contributions sur tous les git
+- [ ] Automatisation du numéro de version via les tags git
 
 ## Déploiement
 
