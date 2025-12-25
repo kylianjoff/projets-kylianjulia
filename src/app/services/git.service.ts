@@ -390,112 +390,181 @@ export class GitService {
   }
 
   private async getGithubContributions(since: Date): Promise<ContributionDay[]> {
+    // Pour GitHub, on utilise l'API GraphQL pour avoir toutes les contributions
     const headers: HeadersInit = {
-      'Accept': 'application/vnd.github.v3+json'
+        'Content-Type': 'application/json',
     };
     
     if (!environment.production && environment.github?.token) {
-      headers['Authorization'] = `token ${environment.github.token}`;
+        headers['Authorization'] = `Bearer ${environment.github.token}`;
     }
+
+    const query = `
+        query {
+        user(login: "${environment.github.username}") {
+            contributionsCollection {
+            contributionCalendar {
+                totalContributions
+                weeks {
+                contributionDays {
+                    contributionCount
+                    date
+                }
+                }
+            }
+            }
+        }
+        }
+    `;
 
     try {
-      const response = await fetch(
-        `https://api.github.com/users/${environment.github.username}/events?per_page=100`,
-        { headers }
-      );
+        const response = await fetch('https://api.github.com/graphql', {
+        method: 'POST',
+        headers,
+        body: JSON.stringify({ query })
+        });
 
-      if (!response.ok) {
-        console.error('GitHub events API error:', response.status);
-        return [];
-      }
-
-      const events = await response.json();
-      const contributionsMap = new Map<string, number>();
-
-      events.forEach((event: any) => {
-        if (event.type === 'PushEvent') {
-          const eventDate = new Date(event.created_at);
-          if (eventDate >= since) {
-            const dateKey = eventDate.toISOString().split('T')[0];
-            const commits = event.payload?.commits?.length || 1;
-            contributionsMap.set(dateKey, (contributionsMap.get(dateKey) || 0) + commits);
-          }
+        if (!response.ok) {
+        console.error('GitHub GraphQL API error:', response.status);
+        // Fallback sur l'API REST si GraphQL échoue
+        return this.getGithubContributionsFallback(since);
         }
-      });
 
-      return Array.from(contributionsMap.entries()).map(([dateStr, count]) => ({
-        date: new Date(dateStr),
-        count,
-        platform: 'github' as const
-      }));
-    } catch (error) {
-      console.error('Error fetching GitHub contributions:', error);
-      return [];
-    }
-  }
-
-  private async getGitlabContributions(since: Date, baseUrl: string, username: string, token?: string): Promise<ContributionDay[]> {
-    const headers: HeadersInit = {
-      'Content-Type': 'application/json'
-    };
-
-    if (!environment.production && token) {
-      headers['PRIVATE-TOKEN'] = token;
-    }
-
-    try {
-      const userResp = await fetch(
-        `${baseUrl}/api/v4/users?username=${username}`,
-        { headers }
-      );
-
-      if (!userResp.ok) {
-        console.error(`GitLab user API error (${baseUrl}):`, userResp.status);
-        return [];
-      }
-
-      const users = await userResp.json();
-      if (!users || users.length === 0) {
-        console.error(`No user found for ${username} on ${baseUrl}`);
-        return [];
-      }
-
-      const userId = users[0].id;
-
-      const eventsResp = await fetch(
-        `${baseUrl}/api/v4/users/${userId}/events?per_page=100&after=${since.toISOString().split('T')[0]}`,
-        { headers }
-      );
-
-      if (!eventsResp.ok) {
-        console.error(`GitLab events API error (${baseUrl}):`, eventsResp.status);
-        return [];
-      }
-
-      const events = await eventsResp.json();
-      const contributionsMap = new Map<string, number>();
-
-      events.forEach((event: any) => {
-        if (event.action_name === 'pushed to' || event.action_name === 'pushed new') {
-          const eventDate = new Date(event.created_at);
-          if (eventDate >= since) {
-            const dateKey = eventDate.toISOString().split('T')[0];
-            const commits = event.push_data?.commit_count || 1;
-            contributionsMap.set(dateKey, (contributionsMap.get(dateKey) || 0) + commits);
-          }
+        const data = await response.json();
+        
+        if (!data.data?.user?.contributionsCollection) {
+        console.error('GitHub GraphQL: No data returned');
+        return this.getGithubContributionsFallback(since);
         }
-      });
 
-      const platform = baseUrl.includes('isima') ? 'gitlab-isima' : 'gitlab';
+        const contributions: ContributionDay[] = [];
+        const weeks = data.data.user.contributionsCollection.contributionCalendar.weeks;
 
-      return Array.from(contributionsMap.entries()).map(([dateStr, count]) => ({
-        date: new Date(dateStr),
-        count,
-        platform: platform as any
-      }));
+        weeks.forEach((week: any) => {
+        week.contributionDays.forEach((day: any) => {
+            const dayDate = new Date(day.date);
+            if (dayDate >= since) {
+            contributions.push({
+                date: dayDate,
+                count: day.contributionCount,
+                platform: 'github'
+            });
+            }
+        });
+        });
+
+        console.log('GitHub GraphQL contributions loaded:', contributions.length);
+        return contributions;
+
     } catch (error) {
-      console.error(`Error fetching ${baseUrl} contributions:`, error);
-      return [];
+        console.error('Error fetching GitHub GraphQL contributions:', error);
+        return this.getGithubContributionsFallback(since);
     }
-  }
+    }
+
+    private async getGithubContributionsFallback(since: Date): Promise<ContributionDay[]> {
+        console.log('Using GitHub Events API fallback...');
+        
+        const headers: HeadersInit = {
+            'Accept': 'application/vnd.github.v3+json'
+        };
+        
+        if (!environment.production && environment.github?.token) {
+            headers['Authorization'] = `token ${environment.github.token}`;
+        }
+
+        try {
+            const response = await fetch(
+            `https://api.github.com/users/${environment.github.username}/events?per_page=100`,
+            { headers }
+            );
+
+            if (!response.ok) {
+            console.error('GitHub events API error:', response.status);
+            return [];
+            }
+
+            const events = await response.json();
+            const contributionsMap = new Map<string, number>();
+
+            events.forEach((event: any) => {
+            if (event.type === 'PushEvent') {
+                const eventDate = new Date(event.created_at);
+                if (eventDate >= since) {
+                const dateKey = eventDate.toISOString().split('T')[0];
+                const commits = event.payload?.commits?.length || 1;
+                contributionsMap.set(dateKey, (contributionsMap.get(dateKey) || 0) + commits);
+                }
+            }
+            });
+
+            return Array.from(contributionsMap.entries()).map(([dateStr, count]) => ({
+            date: new Date(dateStr),
+            count,
+            platform: 'github' as const
+            }));
+        } catch (error) {
+            console.error('Error fetching GitHub contributions:', error);
+            return [];
+        }
+        }
+
+    private async getGitlabContributions(since: Date, baseUrl: string, username: string, token?: string): Promise<ContributionDay[]> {
+        const headers: HeadersInit = {
+            'Content-Type': 'application/json'
+        };
+
+        if (token) {
+            headers['PRIVATE-TOKEN'] = token;
+        }
+
+        try {
+            // Récupérer tous les projets de l'utilisateur
+            const projectsResp = await fetch(
+            `${baseUrl}/api/v4/users/${username}/projects?per_page=100`,
+            { headers }
+            );
+
+            if (!projectsResp.ok) {
+            console.error(`GitLab projects API error (${baseUrl}):`, projectsResp.status);
+            return [];
+            }
+
+            const projects = await projectsResp.json();
+            const contributionsMap = new Map<string, number>();
+
+            // Pour chaque projet, récupérer les commits de l'utilisateur
+            for (const project of projects) {
+            try {
+                const commitsResp = await fetch(
+                `${baseUrl}/api/v4/projects/${project.id}/repository/commits?author=${username}&since=${since.toISOString()}&per_page=100`,
+                { headers }
+                );
+
+                if (commitsResp.ok) {
+                const commits = await commitsResp.json();
+                
+                commits.forEach((commit: any) => {
+                    const commitDate = new Date(commit.created_at);
+                    const dateKey = commitDate.toISOString().split('T')[0];
+                    contributionsMap.set(dateKey, (contributionsMap.get(dateKey) || 0) + 1);
+                });
+                }
+            } catch (err) {
+                console.error(`Error fetching commits for project ${project.name}:`, err);
+            }
+            }
+
+            const platform = baseUrl.includes('isima') ? 'gitlab-isima' : 'gitlab';
+
+            return Array.from(contributionsMap.entries()).map(([dateStr, count]) => ({
+            date: new Date(dateStr),
+            count,
+            platform: platform as any
+            }));
+        } catch (error) {
+            console.error(`Error fetching ${baseUrl} contributions:`, error);
+            return [];
+        }
+    }
 }
