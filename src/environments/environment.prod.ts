@@ -2,15 +2,15 @@ export const environment = {
     production: true,
     github: {
         username: 'kylianjoff',
-        token: '' // Vide en production !
+        token: 'GITHUB_TOKEN_PLACEHOLDER'
     },
     gitlab: {
         username: 'kylianju382',
-        token: '' // Vide en production !
+        token: 'GITLAB_TOKEN_PLACEHOLDER'
     },
     gitlabIsima: {
         baseUrl: 'https://gitlab.isima.fr',
         username: 'kyjulia',
-        token: '' // Vide en production !
+        token: 'GITLAB_ISIMA_TOKEN_PLACEHOLDER'
     }
 };
