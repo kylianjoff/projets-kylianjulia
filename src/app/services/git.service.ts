@@ -39,13 +39,14 @@ export class GitService {
   // ========== RÉCUPÉRATION DES REPOS ==========
 
   async getAllPublicRepos(): Promise<GitRepo[]> {
-    const [githubRepos, gitlabRepos, gitlabIsimaRepos] = await Promise.all([
+    const [githubRepos, gitlabRepos, gitlabIsimaRepos, manualRepos] = await Promise.all([
       this.getGithubRepos(),
       this.getGitlabRepos(),
-      this.getGitlabIsimaRepos()
+      this.getGitlabIsimaRepos(),
+      this.getManualRepos()
     ]);
 
-    const allRepos = [...githubRepos, ...gitlabRepos, ...gitlabIsimaRepos];
+    const allRepos = [...githubRepos, ...gitlabRepos, ...gitlabIsimaRepos, ...manualRepos];
     return allRepos.sort((a, b) => b.lastUpdate.getTime() - a.lastUpdate.getTime());
   }
 
@@ -565,6 +566,154 @@ export class GitService {
         } catch (error) {
             console.error(`Error fetching ${baseUrl} contributions:`, error);
             return [];
+        }
+    }
+
+    private async getManualRepos(): Promise<GitRepo[]> {
+        try {
+            const response = await fetch('manual-repos.json');
+            if (!response.ok) {
+            console.log('No manual repos file found');
+            return [];
+            }
+
+            const data: { repos: string[] } = await response.json();
+            
+            const reposPromises = data.repos.map(url => this.fetchRepoFromUrl(url));
+            const repos = await Promise.all(reposPromises);
+            
+            // Filtrer les repos qui ont échoué (null)
+            return repos.filter(repo => repo !== null) as GitRepo[];
+        } catch (error) {
+            console.log('Could not load manual repos:', error);
+            return [];
+        }
+        }
+
+        private async fetchRepoFromUrl(url: string): Promise<GitRepo | null> {
+        try {
+            // Détecter la plateforme depuis l'URL
+            if (url.includes('github.com')) {
+            return this.fetchGithubRepoByUrl(url);
+            } else if (url.includes('gitlab.isima.fr')) {
+            return this.fetchGitlabRepoByUrl(url, environment.gitlabIsima.baseUrl, 'gitlab-isima');
+            } else if (url.includes('gitlab.com')) {
+            return this.fetchGitlabRepoByUrl(url, 'https://gitlab.com', 'gitlab');
+            }
+            
+            console.warn(`Unknown platform for URL: ${url}`);
+            return null;
+        } catch (error) {
+            console.error(`Error fetching repo from ${url}:`, error);
+            return null;
+        }
+        }
+
+        private async fetchGithubRepoByUrl(url: string): Promise<GitRepo | null> {
+        // Extraire owner et repo de l'URL
+        const match = url.match(/github\.com\/([^\/]+)\/([^\/]+)/);
+        if (!match) return null;
+        
+        const [, owner, repo] = match;
+        
+        const headers: HeadersInit = {
+            'Accept': 'application/vnd.github.v3+json'
+        };
+        
+        if (!environment.production && environment.github?.token) {
+            headers['Authorization'] = `token ${environment.github.token}`;
+        }
+
+        try {
+            const response = await fetch(
+            `https://api.github.com/repos/${owner}/${repo}`,
+            { headers }
+            );
+
+            if (!response.ok) {
+            console.error(`GitHub API error for ${owner}/${repo}:`, response.status);
+            return null;
+            }
+
+            const repoData = await response.json();
+            
+            let liveUrl = repoData.homepage || null;
+            if (!liveUrl && repoData.has_pages) {
+            liveUrl = `https://${owner}.github.io/${repo}`;
+            }
+            
+            return {
+            id: `manual-github-${repoData.id}`,
+            name: repoData.name,
+            description: repoData.description,
+            url: repoData.html_url,
+            gitUrl: repoData.clone_url,
+            liveUrl: liveUrl,
+            defaultBranch: repoData.default_branch,
+            lastUpdate: new Date(repoData.updated_at),
+            createdAt: new Date(repoData.created_at),
+            platform: 'github' as const
+            };
+        } catch (error) {
+            console.error(`Error fetching GitHub repo ${owner}/${repo}:`, error);
+            return null;
+        }
+        }
+
+        private async fetchGitlabRepoByUrl(url: string, baseUrl: string, platform: 'gitlab' | 'gitlab-isima'): Promise<GitRepo | null> {
+        // Extraire le path du projet (peut contenir des groupes)
+        // Exemple: gitlab.com/groupe/sous-groupe/projet
+        const match = url.match(/gitlab\.[^\/]+\/(.+)/);
+        if (!match) return null;
+        
+        let projectPath = match[1].replace(/\.git$/, '').replace(/\/$/, '');
+        
+        const headers: HeadersInit = {
+            'Content-Type': 'application/json'
+        };
+
+        const token = platform === 'gitlab-isima' ? environment.gitlabIsima.token : environment.gitlab.token;
+        if (!environment.production && token) {
+            headers['PRIVATE-TOKEN'] = token;
+        }
+
+        try {
+            // Encoder le path pour l'API GitLab
+            const encodedPath = encodeURIComponent(projectPath);
+            
+            const response = await fetch(
+            `${baseUrl}/api/v4/projects/${encodedPath}`,
+            { headers }
+            );
+
+            if (!response.ok) {
+            console.error(`GitLab API error for ${projectPath}:`, response.status);
+            return null;
+            }
+
+            const repoData = await response.json();
+            
+            let liveUrl = null;
+            if (repoData.pages_access_level !== 'disabled') {
+            const namespace = repoData.namespace?.path || repoData.namespace?.name;
+            liveUrl = `https://${namespace}.${platform === 'gitlab-isima' ? 'pages.isima.fr' : 'gitlab.io'}/${repoData.path}`;
+            }
+            
+            return {
+            id: `manual-${platform}-${repoData.id}`,
+            name: repoData.name,
+            description: repoData.description,
+            url: repoData.web_url,
+            gitUrl: repoData.http_url_to_repo,
+            liveUrl: liveUrl,
+            defaultBranch: repoData.default_branch,
+            lastUpdate: new Date(repoData.last_activity_at),
+            createdAt: new Date(repoData.created_at),
+            platform: platform
+            };
+        } catch (error) {
+            console.error(`Error fetching GitLab repo ${projectPath}:`, error);
+            return null;
         }
     }
 }
