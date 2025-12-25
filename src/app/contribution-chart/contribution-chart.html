@@ -9,11 +9,50 @@
     <button (click)="loadContributions()" class="retry-btn">Réessayer</button>
   </div>
   
-  <div *ngIf="!loading && !error && contributionData" class="chart-wrapper">
-    <canvas #chartCanvas></canvas>
-  </div>
-  
-  <div *ngIf="!loading && !error && !contributionData" class="error">
-    <p>⚠️ Aucune donnée de contribution disponible</p>
+  <div *ngIf="!loading && !error && contributionData" class="heatmap-wrapper">
+    <h3>{{ contributionData.totalCommits }} contributions au cours de la dernière année</h3>
+    
+    <div class="heatmap" #heatmapContainer>
+      <!-- Jours de la semaine -->
+      <div class="weekdays">
+        <div class="weekday">Lun</div>
+        <div class="weekday"></div>
+        <div class="weekday">Mer</div>
+        <div class="weekday"></div>
+        <div class="weekday">Ven</div>
+        <div class="weekday"></div>
+        <div class="weekday"></div>
+      </div>
+      
+      <!-- Grille de contributions -->
+      <div class="months-grid">
+        <div *ngFor="let month of months" class="month-column">
+          <div class="month-label">{{ month.name.split(' ')[0].substring(0, 3) }}</div>
+          <div class="days-grid">
+            <div 
+              *ngFor="let day of month.days"
+              class="day-cell"
+              [style.background-color]="getContributionColor(day.count)"
+              [style.grid-row]="day.dayOfWeek === 0 ? 7 : day.dayOfWeek"
+              [title]="day.count + ' contribution(s) le ' + day.date.toLocaleDateString('fr-FR')"
+            >
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    
+    <!-- Légende -->
+    <div class="legend">
+      <span>Moins</span>
+      <div class="legend-colors">
+        <div class="legend-cell" [style.background-color]="getContributionColor(0)"></div>
+        <div class="legend-cell" [style.background-color]="getContributionColor(3)"></div>
+        <div class="legend-cell" [style.background-color]="getContributionColor(7)"></div>
+        <div class="legend-cell" [style.background-color]="getContributionColor(15)"></div>
+        <div class="legend-cell" [style.background-color]="getContributionColor(25)"></div>
+      </div>
+      <span>Plus</span>
+    </div>
   </div>
 </div>
