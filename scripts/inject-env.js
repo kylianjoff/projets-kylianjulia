@@ -1,23 +1,18 @@
 const fs = require('fs');
+const path = require('path');
 
-const envContent = `
-export const environment = {
-    production: true,
-    github: {
-        username: 'kylianjoff',
-        token: '${process.env.GITHUB_TOKEN || ''}'
-    },
-    gitlab: {
-        username: 'kylianju382',
-        token: '${process.env.GITLAB_TOKEN || ''}'
-    },
-    gitlabIsima: {
-        baseUrl: 'https://gitlab.isima.fr',
-        username: 'kyjulia',
-        token: '${process.env.GITLAB_ISIMA_TOKEN || ''}'
-    }
-};
-`;
+const envProdPath = path.join(__dirname, '..', 'src', 'environments', 'environment.prod.ts');
 
-fs.writeFileSync('src/environments/environment.prod.ts', envContent);
-console.log('✅ Environment variables injected');
+let content = fs.readFileSync(envProdPath, 'utf8');
+
+// Remplacer les placeholders par les vraies variables d'environnement
+content = content.replace('GITHUB_TOKEN_PLACEHOLDER', process.env.GITHUB_TOKEN || '');
+content = content.replace('GITLAB_TOKEN_PLACEHOLDER', process.env.GITLAB_TOKEN || '');
+content = content.replace('GITLAB_ISIMA_TOKEN_PLACEHOLDER', process.env.GITLAB_ISIMA_TOKEN || '');
+
+fs.writeFileSync(envProdPath, content);
+
+console.log('✅ Tokens injected successfully');
+console.log('GitHub token:', process.env.GITHUB_TOKEN ? '✓ présent' : '✗ manquant');
+console.log('GitLab token:', process.env.GITLAB_TOKEN ? '✓ présent' : '✗ manquant');
+console.log('GitLab ISIMA token:', process.env.GITLAB_ISIMA_TOKEN ? '✓ présent' : '✗ manquant');
