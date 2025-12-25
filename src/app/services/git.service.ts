@@ -55,8 +55,8 @@ export class GitService {
       'Accept': 'application/vnd.github.v3+json'
     };
     
-    if (!environment.production && environment.github?.token) {
-      headers['Authorization'] = `token ${environment.github.token}`;
+    if (environment.github?.token) {
+      headers['Authorization'] = `Bearer ${environment.github.token}`;
     }
 
     try {
@@ -230,8 +230,8 @@ export class GitService {
       'Accept': 'application/vnd.github.v3+json'
     };
     
-    if (!environment.production && environment.github?.token) {
-      headers['Authorization'] = `token ${environment.github.token}`;
+    if (environment.github?.token) {
+      headers['Authorization'] = `Bearer ${environment.github.token}`;
     }
 
     const match = repo.gitUrl.match(/github\.com\/([^\/]+)\/([^\/\.]+)/);
@@ -396,8 +396,8 @@ export class GitService {
         'Content-Type': 'application/json',
     };
     
-    if (!environment.production && environment.github?.token) {
-        headers['Authorization'] = `Bearer ${environment.github.token}`;
+    if (environment.github?.token) {
+      headers['Authorization'] = `Bearer ${environment.github.token}`;
     }
 
     const query = `
@@ -470,8 +470,8 @@ export class GitService {
             'Accept': 'application/vnd.github.v3+json'
         };
         
-        if (!environment.production && environment.github?.token) {
-            headers['Authorization'] = `token ${environment.github.token}`;
+        if (environment.github?.token) {
+          headers['Authorization'] = `Bearer ${environment.github.token}`;
         }
 
         try {
@@ -620,8 +620,8 @@ export class GitService {
             'Accept': 'application/vnd.github.v3+json'
         };
         
-        if (!environment.production && environment.github?.token) {
-            headers['Authorization'] = `token ${environment.github.token}`;
+        if (environment.github?.token) {
+          headers['Authorization'] = `Bearer ${environment.github.token}`;
         }
 
         try {
