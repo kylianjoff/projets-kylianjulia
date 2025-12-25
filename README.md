@@ -27,7 +27,7 @@ Ce projet a été généré en utilisant [Angular CLI](https://github.com/angula
 - [X] Affichage automatique des fichiers LICENSE des projets git
 - [ ] Affichage automatique des logos des projets git
 - [X] Affichage des états courants des projets (`En développement`,`Non publié`,`En ligne (V.XX.X)`,...)
-- [ ] Affichage d'un tableau des contributions sur tous les git
+- [X] Affichage d'un tableau des contributions sur tous les git
 - [ ] Automatisation du numéro de version via les tags git
 
 ## Déploiement
