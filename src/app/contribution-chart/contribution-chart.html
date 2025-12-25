@@ -12,4 +12,8 @@
   <div *ngIf="!loading && !error && contributionData" class="chart-wrapper">
     <canvas #chartCanvas></canvas>
   </div>
+  
+  <div *ngIf="!loading && !error && !contributionData" class="error">
+    <p>⚠️ Aucune donnée de contribution disponible</p>
+  </div>
 </div>

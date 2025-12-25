@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewChild, ElementRef, AfterViewInit } from '@angular/core';
+import { Component, ViewChild, ElementRef, AfterViewInit, OnDestroy, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Chart, ChartConfiguration, registerables } from 'chart.js';
 import { GitService, ContributionData } from '../services/git.service';
@@ -12,7 +12,7 @@ Chart.register(...registerables);
   templateUrl: './contribution-chart.html',
   styleUrl: './contribution-chart.css'
 })
-export class ContributionChart implements AfterViewInit {
+export class ContributionChart implements AfterViewInit, OnDestroy {
   @ViewChild('chartCanvas') chartCanvas!: ElementRef<HTMLCanvasElement>;
   
   chart?: Chart;
@@ -20,44 +20,67 @@ export class ContributionChart implements AfterViewInit {
   error = false;
   contributionData?: ContributionData;
 
-  constructor(private gitService: GitService) {}
+  constructor(
+    private gitService: GitService,
+    private cdr: ChangeDetectorRef
+  ) {}
 
   async ngAfterViewInit() {
+    console.log('📈 ContributionChart: ngAfterViewInit called');
     await this.loadContributions();
   }
 
-  public async loadContributions() {
+  async loadContributions() {
     this.loading = true;
     this.error = false;
 
     try {
+      console.log('📈 ContributionChart: Loading contributions...');
       this.contributionData = await this.gitService.getAllContributions();
+      console.log('📈 ContributionChart: Data loaded:', this.contributionData);
       
-      if (this.contributionData && this.chartCanvas) {
-        // Petit délai pour s'assurer que le canvas est bien rendu
-        setTimeout(() => this.createChart(), 100);
+      // Forcer la détection des changements
+      this.loading = false;
+      this.cdr.detectChanges();
+      
+      if (this.contributionData) {
+        console.log('📈 ContributionChart: Waiting for canvas...');
+        // Attendre que le canvas soit rendu
+        setTimeout(() => {
+          console.log('📈 ContributionChart: Canvas check:', {
+            hasCanvas: !!this.chartCanvas,
+            hasNativeElement: !!this.chartCanvas?.nativeElement
+          });
+          this.createChart();
+        }, 500);  // Augmenté à 500ms
       }
     } catch (err) {
-      console.error('Error loading contributions:', err);
+      console.error('📈 ContributionChart: Error loading contributions:', err);
       this.error = true;
-    } finally {
       this.loading = false;
     }
   }
 
   private createChart() {
-    if (!this.contributionData || !this.chartCanvas?.nativeElement) {
-      console.error('Cannot create chart: missing data or canvas');
+    if (!this.contributionData) {
+      console.error('📈 ContributionChart: No contribution data');
+      return;
+    }
+
+    if (!this.chartCanvas?.nativeElement) {
+      console.error('📈 ContributionChart: Canvas element not found');
+      console.log('📈 ContributionChart: chartCanvas:', this.chartCanvas);
       return;
     }
 
     const ctx = this.chartCanvas.nativeElement.getContext('2d');
     if (!ctx) {
-      console.error('Cannot get canvas context');
+      console.error('📈 ContributionChart: Cannot get canvas context');
       return;
     }
 
-    // Préparer les données pour le graphique
+    console.log('📈 ContributionChart: Creating chart with', this.contributionData.days.length, 'days');
+
     const labels = this.contributionData.days.map(day => 
       day.date.toLocaleDateString('fr-FR', { month: 'short', day: 'numeric' })
     );
@@ -131,7 +154,12 @@ export class ContributionChart implements AfterViewInit {
       }
     };
 
-    this.chart = new Chart(ctx, config);
+    try {
+      this.chart = new Chart(ctx, config);
+      console.log('📈 ContributionChart: Chart created successfully!');
+    } catch (err) {
+      console.error('📈 ContributionChart: Error creating chart:', err);
+    }
   }
 
   ngOnDestroy() {
