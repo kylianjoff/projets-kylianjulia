@@ -29,7 +29,7 @@ export class ProjetService {
 
     private async loadCustomUrls() {
         try {
-            const response = await fetch('assets/custom-live-urls.json');
+            const response = await fetch('custom-live-urls.json');
             if (response.ok) {
                 this.customLiveUrls = await response.json();
             } else {
