@@ -1,11 +1,15 @@
 <div class="chart-container">
-    <div *ngIf="loading" class="loading">
-        Chargement des contributions...
-    </div>
-    <div *ngIf="!loading && contributionData">
-        <canvas #chartCanvas></canvas>
-    </div>
-    <div *ngIf="!loading && !contributionData" class="error">
-        Impossible de charger les contributions
-    </div>
+  <div *ngIf="loading" class="loading">
+    <div class="spinner"></div>
+    <p>Chargement des contributions...</p>
+  </div>
+  
+  <div *ngIf="error && !loading" class="error">
+    <p>❌ Impossible de charger les contributions</p>
+    <button (click)="loadContributions()" class="retry-btn">Réessayer</button>
+  </div>
+  
+  <div *ngIf="!loading && !error && contributionData" class="chart-wrapper">
+    <canvas #chartCanvas></canvas>
+  </div>
 </div>

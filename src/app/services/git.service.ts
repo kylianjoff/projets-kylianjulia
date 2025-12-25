@@ -335,14 +335,14 @@ export class GitService {
         return { readme, license };
     }
 
-    async getAllContributions(username?: string): Promise<ContributionData> {
+    async getAllContributions(): Promise<ContributionData> {
         const oneYearAgo = new Date();
         oneYearAgo.setFullYear(oneYearAgo.getFullYear() - 1);
         
         const [githubContribs, gitlabContribs, gitlabIsimaContribs] = await Promise.all([
-            this.getGithubContributions(username || environment.github.username, oneYearAgo),
-            this.getGitlabContributions(username || environment.gitlab.username, oneYearAgo, 'https://gitlab.com'),
-            this.getGitlabContributions(username || environment.gitlabIsima.username, oneYearAgo, environment.gitlabIsima.baseUrl)
+            this.getGithubContributions(oneYearAgo),
+            this.getGitlabContributions(oneYearAgo, 'https://gitlab.com', environment.gitlab.username, environment.gitlab.token),
+            this.getGitlabContributions(oneYearAgo, environment.gitlabIsima.baseUrl, environment.gitlabIsima.username, environment.gitlabIsima.token)
         ]);
 
         // Fusionner les contributions par date
@@ -379,19 +379,18 @@ export class GitService {
         };
         }
 
-        private async getGithubContributions(username: string, since: Date): Promise<ContributionDay[]> {
+        private async getGithubContributions(since: Date): Promise<ContributionDay[]> {
         const headers: HeadersInit = {
             'Accept': 'application/vnd.github.v3+json'
         };
         
-        if (environment.github.token) {
+        if (!environment.production && environment.github?.token) {
             headers['Authorization'] = `token ${environment.github.token}`;
         }
 
         try {
-            // Récupérer tous les events de l'utilisateur
             const response = await fetch(
-            `https://api.github.com/users/${username}/events?per_page=100`,
+            `https://api.github.com/users/${environment.github.username}/events?per_page=100`,
             { headers }
             );
 
@@ -402,7 +401,6 @@ export class GitService {
 
             const events = await response.json();
             
-            // Filtrer les PushEvents et compter par jour
             const contributionsMap = new Map<string, number>();
 
             events.forEach((event: any) => {
@@ -427,18 +425,16 @@ export class GitService {
         }
         }
 
-        private async getGitlabContributions(username: string, since: Date, baseUrl: string): Promise<ContributionDay[]> {
+        private async getGitlabContributions(since: Date, baseUrl: string, username: string, token?: string): Promise<ContributionDay[]> {
         const headers: HeadersInit = {
             'Content-Type': 'application/json'
         };
 
-        const token = baseUrl.includes('isima') ? environment.gitlabIsima.token : environment.gitlab.token;
-        if (token) {
+        if (!environment.production && token) {
             headers['PRIVATE-TOKEN'] = token;
         }
 
         try {
-            // Récupérer l'ID de l'utilisateur
             const userResp = await fetch(
             `${baseUrl}/api/v4/users?username=${username}`,
             { headers }
@@ -454,7 +450,6 @@ export class GitService {
 
             const userId = users[0].id;
 
-            // Récupérer les events de l'utilisateur
             const eventsResp = await fetch(
             `${baseUrl}/api/v4/users/${userId}/events?per_page=100&after=${since.toISOString().split('T')[0]}`,
             { headers }
@@ -467,7 +462,6 @@ export class GitService {
 
             const events = await eventsResp.json();
             
-            // Filtrer les pushed actions et compter par jour
             const contributionsMap = new Map<string, number>();
 
             events.forEach((event: any) => {
@@ -492,5 +486,5 @@ export class GitService {
             console.error(`Error fetching ${baseUrl} contributions:`, error);
             return [];
         }
-    }
+        }
 }
