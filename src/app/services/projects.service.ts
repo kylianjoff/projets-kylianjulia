@@ -112,10 +112,10 @@ export class ProjetService {
 
     getProjetByName(name: string): Projet | undefined {
         // Normalise le nom de l'URL (pour gérer les espaces, majuscules, etc.)
-        const normalizedName = name.toLowerCase().replace(/\s+/g, '-');
+        const normalizedName = name.toLowerCase().replace(/\s+/g, '-').replace(/[^a-z0-9-]/g, '').replace(/-+/g, '-');
         
         return this.projetsSignal().find(p => 
-            p.titre.toLowerCase().replace(/\s+/g, '-') === normalizedName
+            p.titre.toLowerCase().replace(/\s+/g, '-').replace(/[^a-z0-9-]/g, '').replace(/-+/g, '-') === normalizedName
         );
     }
 
