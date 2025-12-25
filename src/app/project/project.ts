@@ -19,6 +19,8 @@ export class Project implements OnInit {
   activeTab = signal<'readme' | 'license'>('readme');
   readmeHtml: SafeHtml = '';
   licenseHtml: SafeHtml = '';
+  loading = signal<boolean>(true);
+  notFound = signal<boolean>(false);
 
   constructor(
     private route: ActivatedRoute,
@@ -91,23 +93,54 @@ export class Project implements OnInit {
   }
 
   async ngOnInit() {
-    const id = Number(this.route.snapshot.paramMap.get('id'));
-    this.projet = this.projetService.getProjetById(id);
-    
-    if (this.projet) {
-      await this.projetService.loadReadmeAndLicense(id);
-      this.projet = this.projetService.getProjetById(id);
-      
-      if (this.projet?.readme) {
-        const html = await marked.parse(this.projet.readme);
-        this.readmeHtml = this.sanitizer.bypassSecurityTrustHtml(html);
-      }
-      
-      if (this.projet?.license) {
-        const html = await marked.parse(this.projet.license);
-        this.licenseHtml = this.sanitizer.bypassSecurityTrustHtml(html);
-      }
+    const name = this.route.snapshot.paramMap.get('name');
+    if(!name) {
+      this.router.navigate(['/']);
+      return;
     }
+
+    await this.waitForProjectsToLoad();
+
+    this.projet = this.projetService.getProjetByName(name);
+
+    if(!this.projet) {
+      console.error('Projet "${name}" non trouvé');
+      this.notFound.set(true);
+      this.loading.set(false);
+      return;
+    }
+
+    await this.projetService.loadReadmeAndLicense(this.projet.id);
+    this.projet = this.projetService.getProjetById(this.projet.id);
+
+    if (this.projet?.readme) {
+      const html = await marked.parse(this.projet.readme);
+      this.readmeHtml = this.sanitizer.bypassSecurityTrustHtml(html);
+    }
+      
+    if (this.projet?.license) {
+      const html = await marked.parse(this.projet.license);
+      this.licenseHtml = this.sanitizer.bypassSecurityTrustHtml(html);
+    }
+
+    this.loading.set(false);
+  }
+
+  private async waitForProjectsToLoad(): Promise<void> {
+    // Si les projets sont déjà chargés, retourne immédiatement
+    if (!this.projetService.isLoading()) {
+      return;
+    }
+
+    // Sinon, attends que isLoading passe à false
+    return new Promise<void>((resolve) => {
+      const interval = setInterval(() => {
+        if (!this.projetService.isLoading()) {
+          clearInterval(interval);
+          resolve();
+        }
+      }, 100);
+    });
   }
 
   closeModal() {

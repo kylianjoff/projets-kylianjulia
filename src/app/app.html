@@ -10,7 +10,7 @@
   <app-contribution-chart></app-contribution-chart>
 
   <div class="proj-list">
-    <div class="proj" *ngFor="let p of projetService.projets()" (click)="openProjet(p.id)">
+    <div class="proj" *ngFor="let p of projetService.projets()" (click)="openProjet(p.titre)">
       <img src="{{ p.logo }}" alt="logo du projet + {{ p.titre }}">
       <div class="titre-desc">
         <h3>{{ p.titre }}</h3>

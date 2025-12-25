@@ -7,7 +7,7 @@ export const routes: Routes = [
         path: '',
         children: [
             {
-                path: 'project/:id',
+                path: 'project/:name',
                 component: Project
             }
         ]

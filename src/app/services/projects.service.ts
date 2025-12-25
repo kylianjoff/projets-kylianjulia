@@ -7,7 +7,11 @@ import { GitService, GitRepo } from './git.service';
 })
 export class ProjetService {
     private projetsSignal = signal<Projet[]>([]);
-    private gitReposMap = new Map<number, GitRepo>(); // Pour garder la référence aux GitRepo
+    private gitReposMap = new Map<number, GitRepo>();
+    private customLiveUrls: { [key: string]: string } = {};
+    
+    // Signal pour indiquer si les projets sont chargés
+    public isLoading = signal<boolean>(true);
 
     readonly nomEtat: string[] = [
         "En développement",
@@ -20,42 +24,75 @@ export class ProjetService {
     readonly projets = this.projetsSignal.asReadonly();
 
     constructor(private gitService: GitService) {
-        this.initializeProjects();
+        this.loadCustomUrls();
+    }
+
+    private async loadCustomUrls() {
+        try {
+            const response = await fetch('assets/custom-live-urls.json');
+            if (response.ok) {
+                this.customLiveUrls = await response.json();
+            } else {
+                console.log('No custom URLs file found, using defaults');
+                this.customLiveUrls = {};
+            }
+        } catch (error) {
+            console.log('Could not load custom URLs, using defaults');
+            this.customLiveUrls = {};
+        }
+        
+        await this.initializeProjects();
     }
 
     private async initializeProjects(): Promise<void> {
-        const gitRepos = await this.gitService.getAllPublicRepos();
+        this.isLoading.set(true);
         
-        const projets: Projet[] = gitRepos.map((repo, index) => {
-            const id = index + 1;
-            this.gitReposMap.set(id, repo); // Sauvegarde la référence
+        try {
+            const gitRepos = await this.gitService.getAllPublicRepos();
             
-            return {
-                id,
-                logo: this.getPlatformLogo(repo.platform),
-                titre: repo.name,
-                description: repo.description || 'Pas de description',
-                etat: this.determineEtat(repo),
-                dateCreation: repo.createdAt,
-                dateMAJ: repo.lastUpdate,
-                gitUrl: repo.url,
-                liveUrl: repo.liveUrl,
-                readme: null,
-                license: null,
-                readmeLoading: false,
-                licenseLoading: false
-            };
-        });
+            const projets: Projet[] = gitRepos.map((repo, index) => {
+                const id = index + 1;
+                this.gitReposMap.set(id, repo);
+                
+                // Priorité : custom URL > homepage API > GitHub Pages
+                let finalLiveUrl = this.customLiveUrls[repo.name] || repo.liveUrl;
+                
+                return {
+                    id,
+                    logo: this.getPlatformLogo(repo.platform),
+                    titre: repo.name,
+                    description: repo.description || 'Pas de description',
+                    etat: this.determineEtat({ ...repo, liveUrl: finalLiveUrl }),
+                    dateCreation: repo.createdAt,
+                    dateMAJ: repo.lastUpdate,
+                    gitUrl: repo.url,
+                    liveUrl: finalLiveUrl,
+                    readme: null,
+                    license: null,
+                    readmeLoading: false,
+                    licenseLoading: false
+                };
+            });
 
-        this.projetsSignal.set(projets);
+            this.projetsSignal.set(projets);
+        } catch (error) {
+            console.error('Error loading projects:', error);
+            this.projetsSignal.set([]);
+        } finally {
+            this.isLoading.set(false);
+        }
     }
 
     private getPlatformLogo(platform: string): string {
         switch(platform) {
-            case 'github': return 'logos/github.png';
-            case 'gitlab': return 'logos/gitlab.png';
-            case 'gitlab-isima': return 'logos/gitlabisima.png';
-            default: return 'image';
+            case 'github': 
+                return 'https://github.githubassets.com/images/modules/logos_page/GitHub-Mark.png';
+            case 'gitlab': 
+                return 'https://about.gitlab.com/images/press/logo/png/gitlab-icon-rgb.png';
+            case 'gitlab-isima': 
+                return 'https://about.gitlab.com/images/press/logo/png/gitlab-icon-rgb.png';
+            default: 
+                return 'https://via.placeholder.com/50';
         }
     }
 
@@ -71,6 +108,15 @@ export class ProjetService {
         }
         
         return Etat.EN_DEV;
+    }
+
+    getProjetByName(name: string): Projet | undefined {
+        // Normalise le nom de l'URL (pour gérer les espaces, majuscules, etc.)
+        const normalizedName = name.toLowerCase().replace(/\s+/g, '-');
+        
+        return this.projetsSignal().find(p => 
+            p.titre.toLowerCase().replace(/\s+/g, '-') === normalizedName
+        );
     }
 
     getProjetById(id: number): Projet | undefined {
@@ -89,16 +135,26 @@ export class ProjetService {
         // Marquer comme en cours de chargement
         this.updateProjet(projetId, { readmeLoading: true, licenseLoading: true });
 
-        // Charger README et LICENSE
-        const { readme, license } = await this.gitService.fetchReadmeAndLicense(gitRepo);
+        try {
+            // Charger README et LICENSE
+            const { readme, license } = await this.gitService.fetchReadmeAndLicense(gitRepo);
 
-        // Mettre à jour le projet
-        this.updateProjet(projetId, {
-            readme,
-            license,
-            readmeLoading: false,
-            licenseLoading: false
-        });
+            // Mettre à jour le projet
+            this.updateProjet(projetId, {
+                readme,
+                license,
+                readmeLoading: false,
+                licenseLoading: false
+            });
+        } catch (error) {
+            console.error('Error loading README/LICENSE:', error);
+            this.updateProjet(projetId, {
+                readme: null,
+                license: null,
+                readmeLoading: false,
+                licenseLoading: false
+            });
+        }
     }
 
     private updateProjet(id: number, updates: Partial<Projet>): void {

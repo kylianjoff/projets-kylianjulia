@@ -18,8 +18,9 @@ export class App {
     private router: Router
   ) {}
 
-  openProjet(id:number) {
-    this.router.navigate(['/project', id]);
+  openProjet(titre:string) {
+    const url = titre.toLowerCase().replace(/\s+/g, '-').replace(/[^a-z0-9-]/g, '').replace(/-+/g, '-');
+    this.router.navigate(['/project', url]);
   }
 
   getEtatLabel(etat: number): string {

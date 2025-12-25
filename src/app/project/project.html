@@ -1,7 +1,20 @@
 <div class="modal-overlay" (click)="closeModal()">
     <div class="modal-content" (click)="$event.stopPropagation()">
         <button class="close-btn" (click)="closeModal()"><span>&times;</span></button>
-        <div class="project-detail" *ngIf="projet">
+
+        <!-- Loading state -->
+        <div class="project-detail" *ngIf="loading()">
+            <div class="loading">Chargement du projet...</div>
+        </div>
+
+        <!-- Not found state -->
+        <div class="project-detail" *ngIf="!loading() && notFound()">
+            <h2>Projet introuvable</h2>
+            <p class="description">Le projet demandé n'existe pas ou n'a pas encore été chargé.</p>
+            <button class="btn-back" (click)="closeModal()">Retour aux projets</button>
+        </div>
+
+        <div class="project-detail" *ngIf="!loading() && !notFound() && projet">
             <h2>{{ projet.titre }}</h2>
             <p class="description">{{ projet.description }}</p>
             <div class="urls">
