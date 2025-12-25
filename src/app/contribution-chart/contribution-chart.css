@@ -1,13 +1,14 @@
 .chart-container {
-    width: 90%;
-    max-width: 1200px;
+    width: 95%;
+    max-width: 1400px;
     padding: 30px;
     background: white;
     border-radius: 15px;
     box-shadow: 0 4px 15px rgba(159, 0, 177, 0.15);
-    margin: 30px 0;
+    margin: 30px auto;
     border: 2px solid #e0e0e0;
     transition: all 0.3s;
+    overflow: hidden;
 }
 
 .chart-container:hover {
@@ -15,84 +16,115 @@
     border-color: #9f00b1;
 }
 
+.heatmap-wrapper {
+    width: 100%;
+}
+
 .heatmap-wrapper h3 {
-    margin: 0 0 20px 0;
-    font-size: 16px;
+    margin: 0 0 25px 0;
+    font-size: 18px;
     color: #666;
     font-weight: 400;
 }
 
 .heatmap {
     display: flex;
-    gap: 8px;
-    overflow-x: auto;
+    gap: 10px;
     padding: 10px 0;
+    width: 100%;
+    overflow-x: auto;
+    overflow-y: hidden;
+    scrollbar-width: thin;
+    scrollbar-color: #9f00b1 #f1f1f1;
+}
+
+.heatmap::-webkit-scrollbar {
+    height: 6px;
+}
+
+.heatmap::-webkit-scrollbar-track {
+    background: #f1f1f1;
+    border-radius: 10px;
+}
+
+.heatmap::-webkit-scrollbar-thumb {
+    background: #9f00b1;
+    border-radius: 10px;
+}
+
+.heatmap::-webkit-scrollbar-thumb:hover {
+    background: #7d008d;
 }
 
 .weekdays {
     display: grid;
-    grid-template-rows: repeat(7, 12px);
+    grid-template-rows: repeat(7, 14px);
     gap: 3px;
     padding-top: 24px;
+    flex-shrink: 0;
 }
 
 .weekday {
-    font-size: 10px;
+    font-size: 11px;
     color: #666;
     text-align: right;
     padding-right: 8px;
-    line-height: 12px;
+    line-height: 14px;
 }
 
 .months-grid {
     display: flex;
     gap: 3px;
-    flex: 1;
+    flex-shrink: 0;
 }
 
 .month-column {
     display: flex;
     flex-direction: column;
     gap: 3px;
+    flex-shrink: 0;
 }
 
 .month-label {
-    font-size: 11px;
+    font-size: 12px;
     color: #666;
     height: 20px;
     text-align: left;
+    white-space: nowrap;
 }
 
 .days-grid {
     display: grid;
-    grid-template-rows: repeat(7, 12px);
+    grid-template-rows: repeat(7, 14px);
     grid-auto-flow: column;
     gap: 3px;
 }
 
 .day-cell {
-    width: 12px;
-    height: 12px;
-    border-radius: 2px;
+    width: 14px;
+    height: 14px;
+    border-radius: 3px;
     cursor: pointer;
     transition: all 0.2s;
     border: 1px solid rgba(27, 31, 35, 0.06);
 }
 
 .day-cell:hover {
-    border-color: rgba(159, 0, 177, 0.5);
-    transform: scale(1.3);
+    border-color: rgba(159, 0, 177, 0.8);
+    transform: scale(1.4);
     z-index: 10;
+    box-shadow: 0 2px 8px rgba(159, 0, 177, 0.4);
 }
 
 .legend {
     display: flex;
     align-items: center;
-    gap: 8px;
+    gap: 10px;
     margin-top: 20px;
     justify-content: flex-end;
-    font-size: 12px;
+    font-size: 13px;
     color: #666;
+    flex-wrap: wrap;
 }
 
 .legend-colors {
@@ -112,7 +144,7 @@
     flex-direction: column;
     justify-content: center;
     align-items: center;
-    height: 200px;
+    min-height: 250px;
     gap: 15px;
 }
 
@@ -158,14 +190,202 @@
     box-shadow: 0 4px 12px rgba(159, 0, 177, 0.4);
 }
 
-/* Responsive */
-@media (max-width: 768px) {
+/* Responsive - VRAIE réduction de largeur */
+
+/* Laptops moyens */
+@media (max-width: 1366px) {
     .chart-container {
-        width: 95%;
-        padding: 15px;
+        width: 100%;
+        max-width: 900px;
+    }
+}
+
+/* Laptops petits */
+@media (max-width: 1280px) {
+    .chart-container {
+        width: 100%;
+        max-width: 800px;
+    }
+}
+
+/* Tablettes paysage */
+@media (max-width: 1024px) {
+    .chart-container {
+        width: 100%;
+        max-width: 600px;
+        padding: 25px 20px;
+    }
+    
+    .heatmap-wrapper h3 {
+        font-size: 16px;
+    }
+}
+
+/* Tablettes portrait */
+@media (max-width: 820px) {
+    .chart-container {
+        width: 100%;
+        max-width: 550px;
+        padding: 20px;
+    }
+    
+    .heatmap-wrapper h3 {
+        font-size: 15px;
+    }
+    
+    .day-cell {
+        width: 12px;
+        height: 12px;
+    }
+    
+    .weekdays {
+        grid-template-rows: repeat(7, 12px);
+    }
+    
+    .days-grid {
+        grid-template-rows: repeat(7, 12px);
+    }
+}
+
+/* Mobiles paysage */
+@media (max-width: 640px) {
+    .chart-container {
+        width: 75%;
+        max-width: 480px;
+        padding: 20px 15px;
+        margin: 20px auto;
+    }
+    
+    .heatmap-wrapper h3 {
+        font-size: 14px;
+        margin-bottom: 20px;
     }
     
     .heatmap {
-        overflow-x: scroll;
+        gap: 8px;
+    }
+    
+    .day-cell {
+        width: 10px;
+        height: 10px;
+    }
+    
+    .weekdays {
+        grid-template-rows: repeat(7, 10px);
+        gap: 2px;
+    }
+    
+    .weekday {
+        font-size: 10px;
+        padding-right: 6px;
+    }
+    
+    .days-grid {
+        grid-template-rows: repeat(7, 10px);
+        gap: 2px;
+    }
+    
+    .month-column {
+        gap: 2px;
+    }
+    
+    .month-label {
+        font-size: 11px;
+    }
+    
+    .legend {
+        font-size: 12px;
+        justify-content: center;
+        margin-top: 15px;
+    }
+    
+    .legend-cell {
+        width: 10px;
+        height: 10px;
+    }
+}
+
+/* Mobiles portrait */
+@media (max-width: 430px) {
+    .chart-container {
+        width: 75%;
+        max-width: 380px;
+        padding: 15px 12px;
+    }
+    
+    .heatmap-wrapper h3 {
+        font-size: 13px;
+        margin-bottom: 15px;
+    }
+    
+    .heatmap {
+        gap: 6px;
+    }
+    
+    .day-cell {
+        width: 8px;
+        height: 8px;
+    }
+    
+    .weekdays {
+        grid-template-rows: repeat(7, 8px);
+        gap: 2px;
+    }
+    
+    .weekday {
+        font-size: 9px;
+        padding-right: 5px;
+    }
+    
+    .days-grid {
+        grid-template-rows: repeat(7, 8px);
+        gap: 2px;
+    }
+    
+    .month-column {
+        gap: 2px;
+    }
+    
+    .month-label {
+        font-size: 10px;
+    }
+    
+    .legend {
+        font-size: 11px;
+    }
+    
+    .legend-cell {
+        width: 9px;
+        height: 9px;
+    }
+}
+
+/* Petits mobiles */
+@media (max-width: 375px) {
+    .chart-container {
+        width: 75%;
+        max-width: 340px;
+        padding: 12px 10px;
+    }
+    
+    .day-cell {
+        width: 7px;
+        height: 7px;
+    }
+    
+    .weekdays {
+        grid-template-rows: repeat(7, 7px);
+    }
+    
+    .days-grid {
+        grid-template-rows: repeat(7, 7px);
+    }
+}
+
+/* Très grands écrans */
+@media (min-width: 1600px) {
+    .chart-container {
+        max-width: 1600px;
+        width: 95%;
     }
 }
