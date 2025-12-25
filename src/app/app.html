@@ -9,6 +9,12 @@
 
   <app-contribution-chart></app-contribution-chart>
 
+  <!-- Écran de chargement -->
+  <div *ngIf="projetService.isLoading()" class="loading-screen">
+    <div class="spinner"></div>
+    <p>Chargement des projets...</p>
+  </div>
+
   <div class="proj-list">
     <div class="proj" *ngFor="let p of projetService.projets()" (click)="openProjet(p.titre)">
       <img src="{{ p.logo }}" alt="logo du projet + {{ p.titre }}">
