@@ -45,7 +45,6 @@ export class GitService {
 
         const allRepos = [...githubRepos, ...gitlabRepos, ...gitlabIsimaRepos];
         
-        // Tri par date de dernière modification (plus récent d'abord)
         return allRepos.sort((a, b) => b.lastUpdate.getTime() - a.lastUpdate.getTime());
     }
 
@@ -54,7 +53,8 @@ export class GitService {
         'Accept': 'application/vnd.github.v3+json'
         };
         
-        if (environment.github.token) {
+        // Utilise le token UNIQUEMENT en développement (pas en production)
+        if (!environment.production && environment.github?.token) {
         headers['Authorization'] = `token ${environment.github.token}`;
         }
 
@@ -71,18 +71,26 @@ export class GitService {
 
         const repos = await response.json();
         
-        return repos.map((repo: any) => ({
+        return repos.map((repo: any) => {
+            let liveUrl = repo.homepage || null;
+            
+            if (!liveUrl && repo.has_pages) {
+            liveUrl = `https://${environment.github.username}.github.io/${repo.name}`;
+            }
+            
+            return {
             id: `github-${repo.id}`,
             name: repo.name,
             description: repo.description,
             url: repo.html_url,
             gitUrl: repo.clone_url,
-            liveUrl: repo.homepage || null,
+            liveUrl: liveUrl,
             defaultBranch: repo.default_branch,
             lastUpdate: new Date(repo.updated_at),
             createdAt: new Date(repo.created_at),
             platform: 'github' as const
-        }));
+            };
+        });
         } catch (error) {
         console.error('Error fetching GitHub repos:', error);
         return [];
@@ -94,7 +102,8 @@ export class GitService {
         'Content-Type': 'application/json'
         };
 
-        if (environment.gitlab.token) {
+        // Token uniquement en dev
+        if (!environment.production && environment.gitlab?.token) {
         headers['PRIVATE-TOKEN'] = environment.gitlab.token;
         }
 
@@ -111,18 +120,27 @@ export class GitService {
 
         const repos = await response.json();
         
-        return repos.map((repo: any) => ({
+        return repos.map((repo: any) => {
+            let liveUrl = null;
+            
+            if (repo.pages_access_level !== 'disabled') {
+            const namespace = repo.namespace?.path || environment.gitlab.username;
+            liveUrl = `https://${namespace}.gitlab.io/${repo.path}`;
+            }
+            
+            return {
             id: `gitlab-${repo.id}`,
             name: repo.name,
             description: repo.description,
             url: repo.web_url,
             gitUrl: repo.http_url_to_repo,
-            liveUrl: repo.pages_url || null,
+            liveUrl: liveUrl,
             defaultBranch: repo.default_branch,
             lastUpdate: new Date(repo.last_activity_at),
             createdAt: new Date(repo.created_at),
             platform: 'gitlab' as const
-        }));
+            };
+        });
         } catch (error) {
         console.error('Error fetching GitLab repos:', error);
         return [];
@@ -134,7 +152,8 @@ export class GitService {
         'Content-Type': 'application/json'
         };
 
-        if (environment.gitlabIsima.token) {
+        // Token uniquement en dev
+        if (!environment.production && environment.gitlabIsima?.token) {
         headers['PRIVATE-TOKEN'] = environment.gitlabIsima.token;
         }
 
@@ -151,18 +170,27 @@ export class GitService {
 
         const repos = await response.json();
         
-        return repos.map((repo: any) => ({
+        return repos.map((repo: any) => {
+            let liveUrl = null;
+            
+            if (repo.pages_access_level !== 'disabled') {
+            const namespace = repo.namespace?.path || environment.gitlabIsima.username;
+            liveUrl = `https://${namespace}.pages.isima.fr/${repo.path}`;
+            }
+            
+            return {
             id: `gitlab-isima-${repo.id}`,
             name: repo.name,
             description: repo.description,
             url: repo.web_url,
             gitUrl: repo.http_url_to_repo,
-            liveUrl: null,
+            liveUrl: liveUrl,
             defaultBranch: repo.default_branch,
             lastUpdate: new Date(repo.last_activity_at),
             createdAt: new Date(repo.created_at),
             platform: 'gitlab-isima' as const
-        }));
+            };
+        });
         } catch (error) {
         console.error('Error fetching GitLab ISIMA repos:', error);
         return [];
