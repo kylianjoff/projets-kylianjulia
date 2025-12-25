@@ -42,6 +42,10 @@ __screenshots__/
 .DS_Store
 Thumbs.db
 
-# token
+# Environnements
+src/environments/environment.ts
+src/environments/environment.development.ts
 
-src/environments/
+# Ne pas ignorer les fichiers template et prod
+!src/environments/environment.template.ts
+!src/environments/environment.prod.ts
