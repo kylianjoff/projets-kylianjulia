@@ -1,8 +1,19 @@
 {
     "repos": [
-        "https://gitlab.com/kj8001838/angular20-starter",
-        "https://gitlab.com/kj8001838/colyseusstarter",
-        "https://gitlab.isima.fr/emdufrenne/projet_clicker_cs",
-        "https://gitlab.isima.fr/adibnouzah/projet-zz1-groupe-10"
+        {
+            "url": "https://gitlab.com/kj8001838/angular20-starter",
+            "id": 74760303
+        },
+        {
+            "url": "https://gitlab.com/kj8001838/colyseusstarter",
+            "id": 74760260
+        },
+        {
+            "url": "https://gitlab.isima.fr/emdufrenne/projet_clicker_cs",
+            "id": 10715
+        },
+        {
+            "url": "https://gitlab.isima.fr/adibnouzah/projet-zz1-groupe-10"
+        }
     ]
 }
