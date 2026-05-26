@@ -1,26 +1,28 @@
-import { Component, signal, OnInit } from '@angular/core';
-import { RouterOutlet, Router } from '@angular/router';
+import { Component, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ProjetService } from './services/projects.service';
 import { ContributionChart } from './contribution-chart/contribution-chart';
+import { Project } from './project/project';
+import { Projet } from './models/projet.model';
 
 @Component({
   selector: 'app-root',
-  imports: [RouterOutlet, CommonModule, ContributionChart],
+  imports: [CommonModule, ContributionChart, Project],
   templateUrl: './app.html',
-  styleUrls: ['./app.css']
+  styleUrl: './app.css'
 })
 export class App {
   protected readonly title = signal('projets-kylianjulia');
+  selectedProjet = signal<Projet | null>(null);
 
-  constructor(
-    public projetService: ProjetService,
-    private router: Router
-  ) {}
+  constructor(public projetService: ProjetService) {}
 
-  openProjet(titre:string) {
-    const url = titre.toLowerCase().replace(/\s+/g, '-').replace(/[^a-z0-9-]/g, '').replace(/-+/g, '-');
-    this.router.navigate(['/project', url]);
+  openProjet(projet: Projet) {
+    this.selectedProjet.set(projet);
+  }
+
+  closeProjet() {
+    this.selectedProjet.set(null);
   }
 
   getEtatLabel(etat: number): string {

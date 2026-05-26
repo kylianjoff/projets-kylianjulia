@@ -1,6 +1,5 @@
-import { Component, OnInit, signal } from '@angular/core';
+import { Component, OnInit, Input, Output, EventEmitter, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { ActivatedRoute, Router } from '@angular/router';
 import { ProjetService } from '../services/projects.service';
 import { Projet } from '../models/projet.model';
 import { marked, Tokens } from 'marked';
@@ -15,7 +14,9 @@ import hljs from 'highlight.js';
   styleUrl: './project.css',
 })
 export class Project implements OnInit {
-  projet: Projet | undefined;
+  @Input() projet: Projet | undefined;
+  @Output() close = new EventEmitter<void>();
+
   activeTab = signal<'readme' | 'license'>('readme');
   readmeHtml: SafeHtml = '';
   licenseHtml: SafeHtml = '';
@@ -23,8 +24,6 @@ export class Project implements OnInit {
   notFound = signal<boolean>(false);
 
   constructor(
-    private route: ActivatedRoute,
-    private router: Router,
     public projetService: ProjetService,
     private sanitizer: DomSanitizer
   ) {
@@ -93,18 +92,7 @@ export class Project implements OnInit {
   }
 
   async ngOnInit() {
-    const name = this.route.snapshot.paramMap.get('name');
-    if(!name) {
-      this.router.navigate(['/']);
-      return;
-    }
-
-    await this.waitForProjectsToLoad();
-
-    this.projet = this.projetService.getProjetByName(name);
-
-    if(!this.projet) {
-      console.error('Projet "${name}" non trouvé');
+    if (!this.projet) {
       this.notFound.set(true);
       this.loading.set(false);
       return;
@@ -126,25 +114,8 @@ export class Project implements OnInit {
     this.loading.set(false);
   }
 
-  private async waitForProjectsToLoad(): Promise<void> {
-    // Si les projets sont déjà chargés, retourne immédiatement
-    if (!this.projetService.isLoading()) {
-      return;
-    }
-
-    // Sinon, attends que isLoading passe à false
-    return new Promise<void>((resolve) => {
-      const interval = setInterval(() => {
-        if (!this.projetService.isLoading()) {
-          clearInterval(interval);
-          resolve();
-        }
-      }, 100);
-    });
-  }
-
   closeModal() {
-    this.router.navigate(['/']);
+    this.close.emit();
   }
 
   setActiveTab(tab: 'readme' | 'license') {

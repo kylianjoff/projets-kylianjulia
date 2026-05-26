@@ -1,32 +1,68 @@
-<div class="content">
-  <h1>Mes projets</h1>
-  <div class="gitUrls">
-    <a href="https://github.com/kylianjoff" target="_blank"><img src="logos/github.png" alt="Logo de github.com"></a>
-    <a href="https://gitlab.com/kylianju382" target="_blank"><img src="logos/gitlab.png" alt="Logo de gitlab.com"></a>
-    <a href="https://gitlab.isima.fr/kyjulia" target="_blank"><img src="logos/gitlabisima.png" alt="Logo de gitlab.isima.fr"></a>
+<div class="min-h-screen flex flex-col items-center pb-10">
+  <h1 class="text-5xl font-bold my-10 text-[#272727] text-center">Mes projets</h1>
+
+  <!-- Liens Git -->
+  <div class="flex flex-row justify-center items-center p-5 gap-8">
+    <a href="https://github.com/kylianjoff" target="_blank"
+      class="group flex items-center justify-center w-24 h-24 p-5 rounded-2xl bg-gradient-to-br from-[#2d2d2d] to-[#1a1a1a] shadow-[0_4px_15px_rgba(0,0,0,0.2)] transition-all duration-300 hover:-translate-y-1 hover:scale-105 hover:shadow-[0_8px_25px_rgba(159,0,177,0.4)] hover:from-[#9f00b1] hover:to-[#7d008d] active:translate-y-[-2px] active:scale-[1.02]">
+      <img src="logos/github.png" alt="Logo de github.com"
+        class="h-[70px] w-[70px] object-contain opacity-90 transition-all duration-300 group-hover:scale-110 group-hover:opacity-100 group-hover:drop-shadow-[0_0_8px_rgba(159,0,177,0.5)]">
+    </a>
+    <a href="https://gitlab.com/kylianju382" target="_blank"
+      class="group flex items-center justify-center w-24 h-24 p-5 rounded-2xl bg-gradient-to-br from-[#2d2d2d] to-[#1a1a1a] shadow-[0_4px_15px_rgba(0,0,0,0.2)] transition-all duration-300 hover:-translate-y-1 hover:scale-105 hover:shadow-[0_8px_25px_rgba(159,0,177,0.4)] hover:from-[#9f00b1] hover:to-[#7d008d] active:translate-y-[-2px] active:scale-[1.02]">
+      <img src="logos/gitlab.png" alt="Logo de gitlab.com"
+        class="h-[70px] w-[70px] object-contain opacity-90 transition-all duration-300 group-hover:scale-110 group-hover:opacity-100 group-hover:drop-shadow-[0_0_8px_rgba(159,0,177,0.5)]">
+    </a>
+    <a href="https://gitlab.isima.fr/kyjulia" target="_blank"
+      class="group flex items-center justify-center w-24 h-24 p-5 rounded-2xl bg-gradient-to-br from-[#2d2d2d] to-[#1a1a1a] shadow-[0_4px_15px_rgba(0,0,0,0.2)] transition-all duration-300 hover:-translate-y-1 hover:scale-105 hover:shadow-[0_8px_25px_rgba(159,0,177,0.4)] hover:from-[#9f00b1] hover:to-[#7d008d] active:translate-y-[-2px] active:scale-[1.02]">
+      <img src="logos/gitlabisima.png" alt="Logo de gitlab.isima.fr"
+        class="h-[70px] w-[70px] object-contain opacity-90 transition-all duration-300 group-hover:scale-110 group-hover:opacity-100 group-hover:drop-shadow-[0_0_8px_rgba(159,0,177,0.5)]">
+    </a>
   </div>
-  <a href="https://kylianjulia.fr/" class="site-perso">Mon site kylianjulia.fr →</a>
+
+  <!-- Lien site perso -->
+  <a href="https://kylianjulia.fr/"
+    class="bg-[#9f00b1] px-5 py-2.5 text-2xl text-[#f9f9f9] no-underline rounded mb-8 transition-all duration-300 ease-in-out hover:scale-110 hover:shadow-[0_0_10px_#9f00b1]">
+    Mon site kylianjulia.fr →
+  </a>
 
   <app-contribution-chart></app-contribution-chart>
 
   <!-- Écran de chargement -->
-  <div *ngIf="projetService.isLoading()" class="loading-screen">
-    <div class="spinner"></div>
-    <p>Chargement des projets...</p>
+  <div *ngIf="projetService.isLoading()" class="flex flex-col justify-center items-center min-h-[300px] gap-5 w-full">
+    <div class="w-[60px] h-[60px] border-[5px] border-[#f3f3f3] border-t-[#9f00b1] rounded-full animate-spin"></div>
+    <p class="text-lg text-[#666] font-medium m-0">Chargement des projets...</p>
   </div>
 
-  <div class="proj-list">
-    <div class="proj" *ngFor="let p of projetService.projets()" (click)="openProjet(p.titre)">
-      <img src="{{ p.logo }}" alt="logo du projet + {{ p.titre }}">
-      <div class="titre-desc">
-        <h3>{{ p.titre }}</h3>
-        <p>{{ p.description }}</p>
+  <!-- Liste des projets -->
+  <div class="flex flex-wrap gap-5 m-5 justify-center w-[90%]">
+    <div *ngFor="let p of projetService.projets()" (click)="openProjet(p)"
+      class="transition-all duration-300 ease-in-out p-5 flex flex-row justify-between items-center w-[40vw] max-xl:w-[80vw] max-md:w-[90vw] max-md:flex-col max-md:text-center min-h-[100px] bg-white border-2 border-[#e0e0e0] rounded-[15px] shadow-sm cursor-pointer hover:scale-[1.02] hover:shadow-[0_4px_15px_rgba(159,0,177,0.3)] hover:border-[#9f00b1]">
+
+      <img src="{{ p.logo }}" alt="logo du projet {{ p.titre }}"
+        class="w-[50px] h-[50px] rounded-full object-contain bg-[#f5f5f5] p-[5px]">
+
+      <div class="flex-1 flex flex-col justify-center items-start mx-5 max-md:items-center max-md:my-4 max-md:mx-0">
+        <h3 class="m-0 mb-2 text-xl text-[#272727]">{{ p.titre }}</h3>
+        <p class="m-0 text-[0.95em] text-[#666] leading-relaxed">{{ p.description }}</p>
       </div>
-      <span class="badge" [attr.data-etat]="p.etat">
+
+      <span class="px-4 py-2 rounded-full text-sm font-semibold whitespace-nowrap"
+        [ngClass]="{
+          'bg-[#fff3cd] text-[#856404]': p.etat === 0,
+          'bg-[#d4edda] text-[#155724]': p.etat === 1,
+          'bg-[#f8d7da] text-[#721c24]': p.etat === 2,
+          'bg-[#d1ecf1] text-[#0c5460]': p.etat === 3,
+          'bg-[#e2e3e5] text-[#383d41]': p.etat === 4
+        }">
         {{ getEtatLabel(p.etat) }}
       </span>
     </div>
   </div>
 </div>
 
-<router-outlet></router-outlet>
+<app-project
+  *ngIf="selectedProjet()"
+  [projet]="selectedProjet()!"
+  (close)="closeProjet()">
+</app-project>

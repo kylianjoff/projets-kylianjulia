@@ -1,52 +1,76 @@
-<div class="modal-overlay" (click)="closeModal()">
-    <div class="modal-content" (click)="$event.stopPropagation()">
-        <button class="close-btn" (click)="closeModal()"><span>&times;</span></button>
+<div class="fixed inset-0 z-[1000] flex justify-center items-center bg-black/40 backdrop-blur-sm" (click)="closeModal()">
+  <div class="slide-in bg-white p-8 rounded-[15px] min-h-[10vh] max-h-[85vh] m-2.5 w-[60vw] max-w-[1000px] max-md:w-[95vw] max-md:p-5 max-md:max-h-[90vh] relative overflow-y-auto shadow-[0_10px_40px_rgba(159,0,177,0.3)]"
+    (click)="$event.stopPropagation()">
 
-        <!-- Loading state -->
-        <div class="project-detail" *ngIf="loading()">
-            <div class="loading">Chargement du projet...</div>
-        </div>
+    <button
+      class="absolute top-4 right-4 bg-transparent border-none text-[32px] cursor-pointer text-[#666] leading-none p-0 w-[35px] h-[35px] flex items-center justify-center transition-all duration-300 rounded-full hover:text-[#9f00b1] hover:bg-[rgba(159,0,177,0.1)] hover:rotate-90"
+      (click)="closeModal()">
+      <span>&times;</span>
+    </button>
 
-        <!-- Not found state -->
-        <div class="project-detail" *ngIf="!loading() && notFound()">
-            <h2>Projet introuvable</h2>
-            <p class="description">Le projet demandé n'existe pas ou n'a pas encore été chargé.</p>
-            <button class="btn-back" (click)="closeModal()">Retour aux projets</button>
-        </div>
-
-        <div class="project-detail" *ngIf="!loading() && !notFound() && projet">
-            <h2>{{ projet.titre }}</h2>
-            <p class="description">{{ projet.description }}</p>
-            <div class="urls">
-                <a [href]="projet.gitUrl" target="_blank" *ngIf="projet.gitUrl">Dépôt GIT</a>
-                <a [href]="projet.liveUrl" target="_blank" *ngIf="projet.liveUrl">Résultat</a>
-            </div>
-            <div class="readme-license">
-                <button 
-                    [class.active]="activeTab() === 'readme'" 
-                    (click)="setActiveTab('readme')">
-                    README
-                </button>
-                <button 
-                    [class.active]="activeTab() === 'license'" 
-                    (click)="setActiveTab('license')">
-                    LICENSE
-                </button>
-            </div>
-            
-            <div class="content-display">
-                <div *ngIf="activeTab() === 'readme'">
-                    <div *ngIf="projet.readmeLoading" class="loading">Chargement du README...</div>
-                    <div *ngIf="!projet.readmeLoading && readmeHtml" class="markdown-content" [innerHTML]="readmeHtml"></div>
-                    <p *ngIf="!projet.readmeLoading && !projet.readme" class="no-content">Pas de README disponible</p>
-                </div>
-                
-                <div *ngIf="activeTab() === 'license'">
-                    <div *ngIf="projet.licenseLoading" class="loading">Chargement de la LICENSE...</div>
-                    <div *ngIf="!projet.licenseLoading && licenseHtml" class="markdown-content" [innerHTML]="licenseHtml"></div>
-                    <p *ngIf="!projet.licenseLoading && !projet.license" class="no-content">Pas de LICENSE disponible</p>
-                </div>
-            </div>
-        </div>
+    <!-- Loading -->
+    <div class="flex flex-col justify-center items-center" *ngIf="loading()">
+      <p class="text-center py-16 text-[#666] italic text-base">Chargement du projet...</p>
     </div>
+
+    <!-- Not found -->
+    <div class="flex flex-col justify-center items-center" *ngIf="!loading() && notFound()">
+      <h2 class="mb-4 text-center text-[#272727] text-3xl font-semibold">Projet introuvable</h2>
+      <p class="text-center text-[#666] mb-6 text-lg leading-relaxed">Le projet demandé n'existe pas ou n'a pas encore été chargé.</p>
+      <button
+        class="mt-5 px-6 py-3 bg-[#9f00b1] text-white border-none rounded-lg text-base cursor-pointer transition-all duration-300 hover:bg-[#7d008d] hover:-translate-y-0.5 hover:shadow-[0_4px_12px_rgba(159,0,177,0.4)]"
+        (click)="closeModal()">
+        Retour aux projets
+      </button>
+    </div>
+
+    <!-- Projet -->
+    <div class="flex flex-col justify-center items-center" *ngIf="!loading() && !notFound() && projet">
+      <h2 class="mb-4 text-center text-[#272727] text-3xl font-bold">{{ projet.titre }}</h2>
+      <p class="text-center text-[#666] mb-6 text-lg leading-relaxed">{{ projet.description }}</p>
+
+      <div class="flex gap-4 mb-6 flex-wrap max-md:flex-col max-md:w-full">
+        <a [href]="projet.gitUrl" target="_blank" *ngIf="projet.gitUrl"
+          class="px-6 py-3 bg-[#9f00b1] text-white no-underline rounded-lg transition-all duration-300 font-medium text-center max-md:w-full hover:bg-[#7d008d] hover:-translate-y-0.5 hover:shadow-[0_4px_12px_rgba(159,0,177,0.4)]">
+          Dépôt GIT
+        </a>
+        <a [href]="projet.liveUrl" target="_blank" *ngIf="projet.liveUrl"
+          class="px-6 py-3 bg-[#9f00b1] text-white no-underline rounded-lg transition-all duration-300 font-medium text-center max-md:w-full hover:bg-[#7d008d] hover:-translate-y-0.5 hover:shadow-[0_4px_12px_rgba(159,0,177,0.4)]">
+          Résultat
+        </a>
+      </div>
+
+      <div class="flex gap-2.5 my-6 max-md:w-full">
+        <button
+          class="px-6 py-3 border-2 cursor-pointer rounded-lg text-[15px] font-medium transition-all duration-300 max-md:flex-1"
+          [ngClass]="activeTab() === 'readme'
+            ? 'border-[#9f00b1] bg-[#9f00b1] text-white'
+            : 'border-[#ddd] bg-white text-[#666] hover:border-[#9f00b1] hover:text-[#9f00b1]'"
+          (click)="setActiveTab('readme')">
+          README
+        </button>
+        <button
+          class="px-6 py-3 border-2 cursor-pointer rounded-lg text-[15px] font-medium transition-all duration-300 max-md:flex-1"
+          [ngClass]="activeTab() === 'license'
+            ? 'border-[#9f00b1] bg-[#9f00b1] text-white'
+            : 'border-[#ddd] bg-white text-[#666] hover:border-[#9f00b1] hover:text-[#9f00b1]'"
+          (click)="setActiveTab('license')">
+          LICENSE
+        </button>
+      </div>
+
+      <div class="content-display w-full max-h-[500px] overflow-y-auto border border-[#e0e0e0] p-5 rounded-[10px] bg-[#f8f9fa]">
+        <div *ngIf="activeTab() === 'readme'">
+          <p *ngIf="projet.readmeLoading" class="text-center py-16 text-[#666] italic">Chargement du README...</p>
+          <div *ngIf="!projet.readmeLoading && readmeHtml" class="markdown-content" [innerHTML]="readmeHtml"></div>
+          <p *ngIf="!projet.readmeLoading && !projet.readme" class="text-center py-16 text-[#999] italic">Pas de README disponible</p>
+        </div>
+        <div *ngIf="activeTab() === 'license'">
+          <p *ngIf="projet.licenseLoading" class="text-center py-16 text-[#666] italic">Chargement de la LICENSE...</p>
+          <div *ngIf="!projet.licenseLoading && licenseHtml" class="markdown-content" [innerHTML]="licenseHtml"></div>
+          <p *ngIf="!projet.licenseLoading && !projet.license" class="text-center py-16 text-[#999] italic">Pas de LICENSE disponible</p>
+        </div>
+      </div>
+    </div>
+  </div>
 </div>
