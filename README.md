@@ -1,48 +1,75 @@
-# Projets-Kylianjulia
+# React + TypeScript + Vite
 
-![Angular](https://img.shields.io/badge/Angular-DD0031?style=for-the-badge&logo=angular&logoColor=white)
+This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
 
-Page répertoriant de manière claire et précis mes projets.
-[kylianjulia.fr](https://kylianjulia.fr/)
+Currently, two official plugins are available:
 
-Ce projet a été généré en utilisant [Angular CLI](https://github.com/angular/angular-cli) version 21.0.3.
+- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
+- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
 
-## Fonctionnalités
+## React Compiler
 
-- Regroupement de tous mes projets.
-- Présentation de mes projets.
-- Lien vers les projets en ligne.
-- Lien vers les dépôts git.
-- Affichage des états courants des projets.
+The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
 
-## Technologies
+## Expanding the ESLint configuration
 
-- Angular 21.0.3
-- TypeScript
-- Node.js / npm
+If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
 
-## TODO
+```js
+export default defineConfig([
+  globalIgnores(['dist']),
+  {
+    files: ['**/*.{ts,tsx}'],
+    extends: [
+      // Other configs...
 
-- [X] Affichage automatique des README des projets git
-- [X] Affichage automatique des fichiers LICENSE des projets git
-- [ ] Affichage automatique des logos des projets git
-- [X] Affichage des états courants des projets (`En développement`,`Non publié`,`En ligne (V.XX.X)`,...)
-- [X] Affichage d'un tableau des contributions sur tous les git
-- [ ] Automatisation du numéro de version via les tags git
+      // Remove tseslint.configs.recommended and replace with this
+      tseslint.configs.recommendedTypeChecked,
+      // Alternatively, use this for stricter rules
+      tseslint.configs.strictTypeChecked,
+      // Optionally, add this for stylistic rules
+      tseslint.configs.stylisticTypeChecked,
 
-## Déploiement
+      // Other configs...
+    ],
+    languageOptions: {
+      parserOptions: {
+        project: ['./tsconfig.node.json', './tsconfig.app.json'],
+        tsconfigRootDir: import.meta.dirname,
+      },
+      // other options...
+    },
+  },
+])
 
-Un système d'intégration continue (CI) et de déploiement continu (CD) sont intégrés au serveur de production. Ces systèmes vérifies le code et build le projet.
-[Voir le résultat](https://projets.kylianjulia.fr/)
+```
 
-## Ressources supplémentaires
+You can also install [eslint-plugin-react-x](https://npmx.dev/package/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://npmx.dev/package/eslint-plugin-react-dom) for React-specific lint rules:
 
-Pour plus d'information sur la technologie Angular, visitez la page [Angular CLI Overview and Command Reference](https://angular.dev/tools/cli).
+```js
+// eslint.config.js
+import reactX from 'eslint-plugin-react-x'
+import reactDom from 'eslint-plugin-react-dom'
 
-## Contributions
+export default defineConfig([
+  globalIgnores(['dist']),
+  {
+    files: ['**/*.{ts,tsx}'],
+    extends: [
+      // Other configs...
+      // Enable lint rules for React
+      reactX.configs['recommended-typescript'],
+      // Enable lint rules for React DOM
+      reactDom.configs.recommended,
+    ],
+    languageOptions: {
+      parserOptions: {
+        project: ['./tsconfig.node.json', './tsconfig.app.json'],
+        tsconfigRootDir: import.meta.dirname,
+      },
+      // other options...
+    },
+  },
+])
 
-Ce projet est fermé aux contributions.
-
-## Auteur
-
-Développé par [Kylian JULIA](https://kylianjulia.fr/).
+```
